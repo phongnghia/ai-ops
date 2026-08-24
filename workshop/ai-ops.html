@@ -932,6 +932,114 @@
 </div>
 
 <!-- ══════════════════════════════════════════════════════════
+     SLIDE 05b — CI/CD AI TOOLS IN THE WILD
+══════════════════════════════════════════════════════════ -->
+<div class="slide">
+    <div class="slide-hd">
+        <span class="num">03b</span>
+        <h2 class="ttl">AI trong CI/CD — <span>Thị trường đang làm gì với pipeline?</span></h2>
+        <span class="tag">Market · CI/CD AI · 2025–2026</span>
+    </div>
+    <div class="body">
+        <div class="def">
+            Ngoài Observability (Datadog) và Incident Management (PagerDuty), có một nhóm tool <em>tích hợp thẳng vào CI/CD pipeline</em> — đây là nhóm gần nhất với những gì workshop này xây. Hãy xem họ đang ở đâu và bạn đang ở đâu so với họ.
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px;">
+            <!-- GitHub Copilot Fix with Copilot -->
+            <div style="background:var(--bg-sub);border-radius:12px;padding:14px;border:1.5px solid var(--border-ui);position:relative;">
+                <div style="position:absolute;top:-1px;left:-1px;right:-1px;height:3px;background:linear-gradient(90deg,#24292f,#57606a);border-radius:12px 12px 0 0;"></div>
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+                    <i class="fa-brands fa-github" style="font-size:20px;color:#24292f;"></i>
+                    <div>
+                        <p style="font-size:13px;font-weight:800;color:var(--text-dark);margin:0;">GitHub Copilot</p>
+                        <p style="font-size:10px;color:var(--text-muted);margin:0;">"Fix with Copilot" · GA 2026</p>
+                    </div>
+                    <span style="background:#fee2e2;color:#991b1b;font-size:9px;font-weight:700;padding:1px 7px;border-radius:4px;margin-left:auto;">Có phí</span>
+                </div>
+                <p style="font-size:11.5px;color:var(--text-muted);margin-bottom:8px;line-height:1.5;">Khi GitHub Actions workflow fail, nút <strong>"Fix with Copilot"</strong> xuất hiện ngay trên UI. Bấm vào, Copilot agent đọc log, tự push fix lên branch, tag bạn review.</p>
+                <div style="background:#f6f8fa;border-radius:7px;padding:7px 10px;margin-bottom:8px;border:1px solid #d0d7de;">
+                    <p style="font-size:10.5px;color:#24292f;font-family:JetBrains Mono,monospace;margin:0;">Build failed → [Fix with Copilot] → agent reads log → pushes fix commit → PR opened</p>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:4px;">
+                    <div style="display:flex;align-items:center;gap:5px;"><i class="fa-solid fa-check" style="color:#10b981;font-size:10px;flex-shrink:0;"></i><p style="font-size:11px;color:var(--text-mid);margin:0;">Tích hợp sâu nhất trong GitHub ecosystem</p></div>
+                    <div style="display:flex;align-items:center;gap:5px;"><i class="fa-solid fa-xmark" style="color:#ef4444;font-size:10px;flex-shrink:0;"></i><p style="font-size:11px;color:var(--text-mid);margin:0;">Chỉ dùng được với GitHub Actions, không Jenkins</p></div>
+                    <div style="display:flex;align-items:center;gap:5px;"><i class="fa-solid fa-xmark" style="color:#ef4444;font-size:10px;flex-shrink:0;"></i><p style="font-size:11px;color:var(--text-mid);margin:0;">Data log lên cloud GitHub/OpenAI, không air-gapped</p></div>
+                </div>
+            </div>
+
+            <!-- Harness AIDA -->
+            <div style="background:var(--bg-sub);border-radius:12px;padding:14px;border:1.5px solid var(--border-ui);position:relative;">
+                <div style="position:absolute;top:-1px;left:-1px;right:-1px;height:3px;background:linear-gradient(90deg,#0078d7,#00b4d8);border-radius:12px 12px 0 0;"></div>
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+                    <div style="width:24px;height:24px;border-radius:6px;background:#0078d7;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                        <i class="fa-solid fa-h" style="color:white;font-size:12px;"></i>
+                    </div>
+                    <div>
+                        <p style="font-size:13px;font-weight:800;color:var(--text-dark);margin:0;">Harness AIDA</p>
+                        <p style="font-size:10px;color:var(--text-muted);margin:0;">AI Development Assistant · 2025</p>
+                    </div>
+                    <span style="background:#fee2e2;color:#991b1b;font-size:9px;font-weight:700;padding:1px 7px;border-radius:4px;margin-left:auto;">Có phí</span>
+                </div>
+                <p style="font-size:11.5px;color:var(--text-muted);margin-bottom:8px;line-height:1.5;">AI xuyên suốt Harness platform: phân tích pipeline failure, generate pipeline YAML từ ngôn ngữ tự nhiên, SAST scan, suggest remediation, generate OPA policy.</p>
+                <div style="background:#eff6ff;border-radius:7px;padding:7px 10px;margin-bottom:8px;border:1px solid #bfdbfe;">
+                    <p style="font-size:10.5px;color:#1e40af;margin:0;">"Why did this deployment fail?" → AIDA reads log + metrics + Git diff → Root cause analysis</p>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:4px;">
+                    <div style="display:flex;align-items:center;gap:5px;"><i class="fa-solid fa-check" style="color:#10b981;font-size:10px;flex-shrink:0;"></i><p style="font-size:11px;color:var(--text-mid);margin:0;">Full SDLC coverage — build, test, deploy, security</p></div>
+                    <div style="display:flex;align-items:center;gap:5px;"><i class="fa-solid fa-xmark" style="color:#ef4444;font-size:10px;flex-shrink:0;"></i><p style="font-size:11px;color:var(--text-mid);margin:0;">Phải migrate toàn bộ pipeline sang Harness</p></div>
+                    <div style="display:flex;align-items:center;gap:5px;"><i class="fa-solid fa-xmark" style="color:#ef4444;font-size:10px;flex-shrink:0;"></i><p style="font-size:11px;color:var(--text-mid);margin:0;">Không kiểm soát được prompt hay model choice</p></div>
+                </div>
+            </div>
+
+            <!-- Self-built (workshop) -->
+            <div style="background:linear-gradient(135deg,#f0fdf4,#eff6ff);border-radius:12px;padding:14px;border:1.5px solid #86efac;position:relative;">
+                <div style="position:absolute;top:-1px;left:-1px;right:-1px;height:3px;background:linear-gradient(90deg,#059669,#2563eb);border-radius:12px 12px 0 0;"></div>
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+                    <div style="width:24px;height:24px;border-radius:6px;background:linear-gradient(135deg,#059669,#2563eb);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                        <i class="fa-solid fa-wrench" style="color:white;font-size:11px;"></i>
+                    </div>
+                    <div>
+                        <p style="font-size:13px;font-weight:800;color:var(--text-dark);margin:0;">Workshop này</p>
+                        <p style="font-size:10px;color:var(--text-muted);margin:0;">Self-built · Jenkins + FastAPI + LiteLLM</p>
+                    </div>
+                    <span style="background:#d1fae5;color:#065f46;font-size:9px;font-weight:700;padding:1px 7px;border-radius:4px;margin-left:auto;">$0 + OSS</span>
+                </div>
+                <p style="font-size:11.5px;color:var(--text-muted);margin-bottom:8px;line-height:1.5;">5 dòng bash trong Jenkinsfile, FastAPI backend, LiteLLM gateway. Chạy trên bất kỳ CI/CD nào, air-gapped với Ollama, full kiểm soát prompt và model.</p>
+                <div style="background:#dcfce7;border-radius:7px;padding:7px 10px;margin-bottom:8px;border:1px solid #86efac;">
+                    <p style="font-size:10.5px;color:#166534;margin:0;">post{"{"}failure{"}"} → analyze.sh → FastAPI → LiteLLM → Gemini/Ollama → Slack + Console</p>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:4px;">
+                    <div style="display:flex;align-items:center;gap:5px;"><i class="fa-solid fa-check" style="color:#10b981;font-size:10px;flex-shrink:0;"></i><p style="font-size:11px;color:var(--text-mid);margin:0;">Tích hợp bất kỳ CI/CD tool nào chỉ với HTTP</p></div>
+                    <div style="display:flex;align-items:center;gap:5px;"><i class="fa-solid fa-check" style="color:#10b981;font-size:10px;flex-shrink:0;"></i><p style="font-size:11px;color:var(--text-mid);margin:0;">Air-gapped, full data privacy với Ollama</p></div>
+                    <div style="display:flex;align-items:center;gap:5px;"><i class="fa-solid fa-check" style="color:#10b981;font-size:10px;flex-shrink:0;"></i><p style="font-size:11px;color:var(--text-mid);margin:0;">Customize được prompt, RAG, model hoàn toàn</p></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Key insight box -->
+        <div style="background:linear-gradient(135deg,#fef3c7,#fffbeb);border:1.5px solid #fcd34d;border-radius:12px;padding:12px 16px;display:flex;align-items:flex-start;gap:12px;">
+            <i class="fa-solid fa-lightbulb" style="color:#d97706;font-size:20px;flex-shrink:0;margin-top:2px;"></i>
+            <div>
+                <p style="font-size:13px;font-weight:800;color:#92400e;margin-bottom:4px;">Insight quan trọng từ thực tế (LinearB 2025)</p>
+                <p style="font-size:12px;color:#92400e;margin:0;">Dù AI tools tăng 30% số PR được tạo, chỉ có <strong>+2% features</strong> thực sự ra production. Lý do: bottleneck không phải ở "viết code" mà ở <strong>review, CI/CD, và deployment pipeline</strong>. AI-Ops nhắm đúng chỗ bottleneck thật — <em>không phải code generation, mà là pipeline reliability</em>.</p>
+            </div>
+        </div>
+        <div class="bridge">
+            <i class="fa-solid fa-arrow-right" style="color:var(--primary);font-size:12px;"></i>
+            <p style="font-size:12px;color:var(--text-muted);margin:0;"><strong style="color:var(--primary);">Tiếp theo:</strong> Rõ landscape rồi — quyết định build vs buy dựa trên 7 tiêu chí cụ thể.</p>
+        </div>
+        <div class="glossary">
+            <span class="gl-label">Glossary</span>
+            <span class="gl-item"><strong>SDLC</strong> Software Development Life Cycle — toàn bộ vòng đời phát triển phần mềm từ design đến production</span>
+            <span class="gl-item"><strong>OPA</strong> Open Policy Agent — công cụ enforce policy as code, dùng ngôn ngữ Rego</span>
+            <span class="gl-item"><strong>SAST</strong> Static Application Security Testing — phân tích bảo mật source code mà không cần chạy</span>
+            <span class="gl-item"><strong>Air-gapped</strong> hệ thống hoàn toàn tách biệt khỏi internet, dữ liệu không ra ngoài</span>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
      SLIDE 06 — BUILD vs BUY
 ══════════════════════════════════════════════════════════ -->
 <div class="slide">
@@ -1786,7 +1894,7 @@ sys.stdout.<span class="fn">write</span>(<span class="str">""</span>.<span class
     </div>
     <div class="body">
         <!-- 4 takeaway cards -->
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px;">
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px;">
             <div style="background:var(--primary-lt);border:1.5px solid #bfdbfe;border-radius:14px;padding:16px;text-align:center;">
                 <div style="width:40px;height:40px;border-radius:12px;background:#bfdbfe;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;">
                     <i class="fa-solid fa-filter" style="color:#1d4ed8;font-size:17px;"></i>
@@ -1816,8 +1924,62 @@ sys.stdout.<span class="fn">write</span>(<span class="str">""</span>.<span class
                 <p style="font-size:11.5px;color:var(--text-muted);line-height:1.5;margin:0;">Jenkins, ArgoCD, Coolify, GitHub Actions — cùng 1 backend AI.</p>
             </div>
         </div>
+
+        <!-- Decision Checklist + Action Plan side by side -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+            <!-- Decision Checklist -->
+            <div style="background:var(--bg-sub);border-radius:12px;padding:14px;border:1.5px solid var(--border-ui);">
+                <p style="font-size:12px;font-weight:800;color:var(--text-dark);margin-bottom:10px;"><i class="fa-solid fa-list-check" style="color:var(--primary);margin-right:6px;"></i>Decision Checklist — áp dụng cho team bạn</p>
+                <div style="display:flex;flex-direction:column;gap:6px;">
+                    <div style="background:white;border-radius:8px;padding:8px 10px;border:1px solid var(--border-ui);display:flex;align-items:flex-start;gap:8px;">
+                        <div style="width:20px;height:20px;border-radius:4px;border:2px solid #d1fae5;background:#f0fdf4;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;"><i class="fa-solid fa-check" style="color:#10b981;font-size:9px;"></i></div>
+                        <p style="font-size:11.5px;color:var(--text-mid);margin:0;">Team có Jenkins / CI/CD đang chạy → <strong>thêm AI-Ops ngay, không cần đổi tool</strong></p>
+                    </div>
+                    <div style="background:white;border-radius:8px;padding:8px 10px;border:1px solid var(--border-ui);display:flex;align-items:flex-start;gap:8px;">
+                        <div style="width:20px;height:20px;border-radius:4px;border:2px solid #d1fae5;background:#f0fdf4;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;"><i class="fa-solid fa-check" style="color:#10b981;font-size:9px;"></i></div>
+                        <p style="font-size:11.5px;color:var(--text-mid);margin:0;">Data nhạy cảm (banking, healthcare) → <strong>dùng Ollama, log không ra ngoài</strong></p>
+                    </div>
+                    <div style="background:white;border-radius:8px;padding:8px 10px;border:1px solid var(--border-ui);display:flex;align-items:flex-start;gap:8px;">
+                        <div style="width:20px;height:20px;border-radius:4px;border:2px solid #d1fae5;background:#f0fdf4;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;"><i class="fa-solid fa-check" style="color:#10b981;font-size:9px;"></i></div>
+                        <p style="font-size:11.5px;color:var(--text-mid);margin:0;">Muốn nhanh + free → <strong>Gemini free tier + 5 dòng bash là đủ</strong></p>
+                    </div>
+                    <div style="background:white;border-radius:8px;padding:8px 10px;border:1px solid var(--border-ui);display:flex;align-items:flex-start;gap:8px;">
+                        <div style="width:20px;height:20px;border-radius:4px;border:2px solid #bfdbfe;background:var(--primary-lt);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;"><i class="fa-solid fa-arrow-right" style="color:var(--primary);font-size:9px;"></i></div>
+                        <p style="font-size:11.5px;color:var(--text-mid);margin:0;">Team 50+, budget lớn, cần full observability → <strong>Datadog / Dynatrace xứng đáng</strong></p>
+                    </div>
+                    <div style="background:white;border-radius:8px;padding:8px 10px;border:1px solid var(--border-ui);display:flex;align-items:flex-start;gap:8px;">
+                        <div style="width:20px;height:20px;border-radius:4px;border:2px solid #bfdbfe;background:var(--primary-lt);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;"><i class="fa-solid fa-arrow-right" style="color:var(--primary);font-size:9px;"></i></div>
+                        <p style="font-size:11.5px;color:var(--text-mid);margin:0;">Dùng GitHub + không ngại SaaS → <strong>GitHub Copilot Fix with Copilot (2026)</strong></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Immediate Action Plan -->
+            <div style="background:var(--bg-sub);border-radius:12px;padding:14px;border:1.5px solid var(--border-ui);">
+                <p style="font-size:12px;font-weight:800;color:var(--text-dark);margin-bottom:10px;"><i class="fa-solid fa-bolt" style="color:#d97706;margin-right:6px;"></i>Về đến bàn làm việc — làm ngay điều này</p>
+                <div style="display:flex;flex-direction:column;gap:5px;">
+                    <div style="background:#fff8f0;border-radius:8px;padding:8px 10px;border-left:3px solid #ea580c;">
+                        <p style="font-size:11px;font-weight:700;color:#9a3412;margin-bottom:2px;"><i class="fa-solid fa-1" style="margin-right:4px;font-size:10px;"></i>30 phút — Verify hệ thống chạy</p>
+                        <p style="font-size:10.5px;color:#7c2d12;margin:0;"><code style="background:#fde8d0;color:#9a3412;font-size:9.5px;">docker compose up -d</code> → gọi Swagger UI → test với log thật của team</p>
+                    </div>
+                    <div style="background:#f0f9ff;border-radius:8px;padding:8px 10px;border-left:3px solid #0284c7;">
+                        <p style="font-size:11px;font-weight:700;color:#0c4a6e;margin-bottom:2px;"><i class="fa-solid fa-2" style="margin-right:4px;font-size:10px;"></i>Ngày mai — Tích hợp vào 1 pipeline thật</p>
+                        <p style="font-size:10.5px;color:#075985;margin:0;">Thêm <code style="background:#dbeafe;color:#1e40af;font-size:9.5px;">post{"{"}failure{"}"}</code> block vào 1 Jenkinsfile của project thật. Không cần hoàn hảo.</p>
+                    </div>
+                    <div style="background:#f0fdf4;border-radius:8px;padding:8px 10px;border-left:3px solid #16a34a;">
+                        <p style="font-size:11px;font-weight:700;color:#14532d;margin-bottom:2px;"><i class="fa-solid fa-3" style="margin-right:4px;font-size:10px;"></i>Tuần sau — Đo và chia sẻ kết quả</p>
+                        <p style="font-size:10.5px;color:#166534;margin:0;">Ghi lại: AI phân tích đúng không? Tiết kiệm bao nhiêu phút debug? Chia sẻ với team để nhận feedback.</p>
+                    </div>
+                    <div style="background:#fdf4ff;border-radius:8px;padding:8px 10px;border-left:3px solid #9333ea;">
+                        <p style="font-size:11px;font-weight:700;color:#581c87;margin-bottom:2px;"><i class="fa-solid fa-4" style="margin-right:4px;font-size:10px;"></i>Tháng sau — Nâng cấp RAG + Embed thật</p>
+                        <p style="font-size:10.5px;color:#6b21a8;margin:0;">Thay placeholder embedder bằng <code style="background:#ede9fe;color:#6d28d9;font-size:9.5px;">text-embedding-3-small</code>. RAG trở nên semantic thật sự.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Action plan -->
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px;">
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;">
             <div style="background:var(--bg-sub);border:1.5px solid var(--border-ui);border-radius:12px;padding:14px;display:flex;align-items:flex-start;gap:12px;">
                 <div style="width:36px;height:36px;border-radius:10px;background:var(--primary-lt);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
                     <i class="fa-solid fa-calendar-day" style="color:var(--primary);font-size:14px;"></i>
@@ -1860,6 +2022,14 @@ sys.stdout.<span class="fn">write</span>(<span class="str">""</span>.<span class
                 <span class="pill" style="font-size:11px;padding:4px 14px;">#AIOps</span>
                 <span class="pill" style="font-size:11px;padding:4px 14px;">#ShipIt</span>
             </div>
+        </div>
+        <div class="glossary">
+            <span class="gl-label">Glossary</span>
+            <span class="gl-item"><strong>LiteLLM</strong> thư viện/proxy server chuẩn hóa API call đến 100+ LLM providers (OpenAI, Azure, Gemini...)</span>
+            <span class="gl-item"><strong>RAG</strong> Retrieval-Augmented Generation — tra cứu dữ liệu cũ để làm giàu context cho AI</span>
+            <span class="gl-item"><strong>pgvector</strong> PostgreSQL extension lưu vector embedding cho semantic search</span>
+            <span class="gl-item"><strong>MCP</strong> Model Context Protocol — chuẩn kết nối AI Agent với tools và data sources bên ngoài</span>
+            <span class="gl-item"><strong>ArgoCD</strong> GitOps CD tool cho K8s — tự đồng bộ cluster theo trạng thái khai báo trong Git</span>
         </div>
     </div>
 </div>

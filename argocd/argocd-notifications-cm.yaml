@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-notifications-cm
+  namespace: argocd
+data:
+  # Trigger: fire when an Application becomes Degraded or has sync errors.
+  # ArgoCD evaluates the trigger expression against the application state;
+  # oncePer prevents duplicate notifications for the same failure.
+  trigger.on-sync-failed: |
+    - when: app.status.operationState.phase in ['Error', 'Failed']
+      oncePer: app.status.operationState.startedAt
+      send: [ai-ops-analysis]
+
+  trigger.on-health-degraded: |
+    - when: app.status.health.status == 'Degraded'
+      oncePer: app.status.health.status
+      send: [ai-ops-analysis]
+
+  # Template: calls the AI Ops backend and formats the result.
+  # The webhook body is assembled by analyze.sh which uses the ArgoCD
+  # context variables injected via the notificationTemplate.spec.webhook block.
+  template.ai-ops-analysis: |
+    webhook:
+      ai-ops-backend:
+        method: POST
+        path: /api/analyze-log
+        body: |
+          {
+            "build_number": "{{.app.metadata.name}}",
+            "job_name": "argocd/{{.app.metadata.name}}",
+            "build_url": "{{.context.argocdUrl}}/applications/{{.app.metadata.name}}",
+            "cleaned_log": "ArgoCD Application Failure\nApplication: {{.app.metadata.name}}\nNamespace: {{.app.spec.destination.namespace}}\nERROR: Sync status: {{.app.status.sync.status}}\nERROR: Health status: {{.app.status.health.status}}\nMessage: {{if .app.status.operationState.message}}{{.app.status.operationState.message}}{{else}}No message available{{end}}"
+          }
+
+  # Service: points to the AI Ops backend.
+  # The URL is read from the argocd-notifications-secret so it is never
+  # stored in plaintext in this ConfigMap.
+  service.webhook.ai-ops-backend: |
+    url: $ai-ops-backend-url
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: X-AI-Client
+        value: ArgoCD

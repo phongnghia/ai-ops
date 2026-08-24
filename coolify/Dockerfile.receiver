@@ -1,0 +1,9 @@
+FROM python:3.12-alpine
+
+WORKDIR /app
+COPY webhook_receiver.py .
+
+# Expose the webhook receiver port.
+EXPOSE 9000
+
+CMD ["python3", "webhook_receiver.py"]

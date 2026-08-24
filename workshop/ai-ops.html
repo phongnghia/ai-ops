@@ -1608,40 +1608,74 @@ sys.stdout.<span class="fn">write</span>(<span class="str">""</span>.<span class
         <!-- Slack mockup -->
         <div>
             <p style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Preview — Slack Notification trong channel <code>#ai-ops</code></p>
-            <svg viewBox="0 0 960 140" xmlns="http://www.w3.org/2000/svg" style="width:100%;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,.1);">
-                <!-- Slack chrome background -->
-                <rect width="960" height="140" fill="#1a1d21" rx="12"/>
-                <!-- Sidebar -->
-                <rect x="0" y="0" width="200" height="140" fill="#19171d" rx="12"/>
-                <rect x="188" y="0" width="12" height="140" fill="#19171d"/>
-                <text x="16" y="22" font-family="Plus Jakarta Sans,sans-serif" font-size="13" font-weight="800" fill="white">I'm a devops engineer</text>
-                <text x="16" y="44" font-family="Plus Jakarta Sans,sans-serif" font-size="10" fill="#ababad">Channels</text>
-                <rect x="10" y="50" width="180" height="22" rx="5" fill="#248045"/>
-                <text x="20" y="65" font-family="Plus Jakarta Sans,sans-serif" font-size="11" font-weight="700" fill="white"># ai-ops</text>
-                <text x="20" y="86" font-family="Plus Jakarta Sans,sans-serif" font-size="10" fill="#ababad"># general</text>
-                <text x="20" y="102" font-family="Plus Jakarta Sans,sans-serif" font-size="10" fill="#ababad"># random</text>
-                <!-- Main content area -->
-                <rect x="200" y="0" width="760" height="140" fill="#1a1d21"/>
-                <!-- Channel header -->
-                <rect x="200" y="0" width="760" height="36" fill="#222529"/>
-                <text x="216" y="22" font-family="Plus Jakarta Sans,sans-serif" font-size="12" font-weight="700" fill="white"># ai-ops</text>
-                <!-- Bot message -->
-                <circle cx="222" cy="68" r="14" fill="#4a154b"/>
-                <text x="222" y="72" text-anchor="middle" font-family="Plus Jakarta Sans,sans-serif" font-size="10" font-weight="700" fill="white">AI</text>
-                <text x="242" y="60" font-family="Plus Jakarta Sans,sans-serif" font-size="11" font-weight="700" fill="white">ai-ops</text>
-                <text x="298" y="60" font-family="Plus Jakarta Sans,sans-serif" font-size="9" fill="#ababad">APP</text>
-                <text x="320" y="60" font-family="Plus Jakarta Sans,sans-serif" font-size="10" fill="#ababad">10:01 AM</text>
-                <text x="242" y="75" font-family="Plus Jakarta Sans,sans-serif" font-size="11" font-weight="700" fill="white">Build Failed: demo-ai-ops #39</text>
-                <text x="242" y="89" font-family="Plus Jakarta Sans,sans-serif" font-size="9.5" fill="#ababad">Provider: log analyzer  |  Model: gemini-3.5-flash-lite</text>
-                <!-- Colored left bar message -->
-                <rect x="242" y="97" width="4" height="36" rx="2" fill="#dc143c"/>
-                <text x="252" y="110" font-family="JetBrains Mono,monospace" font-size="9" fill="#f85149" font-weight="700">🚨 Problem</text>
-                <text x="252" y="123" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#c9d1d9">Maven build failed (mvn -B test) — 3 unit test failures in order-service.</text>
-                <!-- Root cause preview -->
-                <text x="500" y="110" font-family="JetBrains Mono,monospace" font-size="9" fill="#d2a8ff" font-weight="700">🔍 Root Cause  &amp;  🛠️ Fix Steps</text>
-                <text x="500" y="123" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#c9d1d9">NullPointerException + boundary + state validation → 4 steps to fix</text>
-                <!-- View log button -->
-                <rect x="242" y="133" width="80" height="0" rx="3" fill="#404040"/>
+            <svg viewBox="0 0 960 210" xmlns="http://www.w3.org/2000/svg" style="width:100%;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,.1);">
+                <!-- Background -->
+                <rect width="960" height="210" fill="#1a1d21" rx="12"/>
+
+                <!-- ── Sidebar ── -->
+                <rect x="0" y="0" width="210" height="210" fill="#19171d" rx="12"/>
+                <rect x="198" y="0" width="12" height="210" fill="#19171d"/>
+                <!-- Workspace name -->
+                <text x="16" y="24" font-family="Plus Jakarta Sans,sans-serif" font-size="13" font-weight="800" fill="white">I'm a devops engineer</text>
+                <line x1="16" y1="32" x2="194" y2="32" stroke="#2c2d30" stroke-width="1"/>
+                <!-- Channels label -->
+                <text x="16" y="50" font-family="Plus Jakarta Sans,sans-serif" font-size="10" font-weight="600" fill="#ababad">Channels</text>
+                <!-- Active channel -->
+                <rect x="8" y="56" width="192" height="24" rx="5" fill="#248045"/>
+                <text x="22" y="72" font-family="Plus Jakarta Sans,sans-serif" font-size="11" font-weight="700" fill="white"># ai-ops</text>
+                <!-- Other channels -->
+                <text x="22" y="96" font-family="Plus Jakarta Sans,sans-serif" font-size="10" fill="#ababad"># general</text>
+                <text x="22" y="114" font-family="Plus Jakarta Sans,sans-serif" font-size="10" fill="#ababad"># random</text>
+                <text x="22" y="132" font-family="Plus Jakarta Sans,sans-serif" font-size="10" fill="#ababad"># devops-alerts</text>
+
+                <!-- ── Main content ── -->
+                <rect x="210" y="0" width="750" height="210" fill="#1a1d21"/>
+
+                <!-- Channel header bar -->
+                <rect x="210" y="0" width="750" height="38" fill="#222529"/>
+                <rect x="210" y="36" width="750" height="1" fill="#2c2d30"/>
+                <text x="228" y="23" font-family="Plus Jakarta Sans,sans-serif" font-size="13" font-weight="700" fill="white"># ai-ops</text>
+                <text x="306" y="23" font-family="Plus Jakarta Sans,sans-serif" font-size="10" fill="#ababad">DevOps Automation Channel</text>
+
+                <!-- Message row -->
+                <!-- Bot avatar -->
+                <rect x="224" y="52" width="32" height="32" rx="6" fill="#4a154b"/>
+                <text x="240" y="72" text-anchor="middle" font-family="Plus Jakarta Sans,sans-serif" font-size="11" font-weight="800" fill="white">AI</text>
+
+                <!-- Message header -->
+                <text x="264" y="64" font-family="Plus Jakarta Sans,sans-serif" font-size="12" font-weight="700" fill="white">ai-ops</text>
+                <rect x="318" y="55" width="28" height="13" rx="3" fill="#3c4043"/>
+                <text x="332" y="65" text-anchor="middle" font-family="Plus Jakarta Sans,sans-serif" font-size="8" font-weight="700" fill="#ababad">APP</text>
+                <text x="354" y="64" font-family="Plus Jakarta Sans,sans-serif" font-size="10" fill="#ababad">10:01 AM</text>
+
+                <!-- Message title -->
+                <text x="264" y="80" font-family="Plus Jakarta Sans,sans-serif" font-size="12" font-weight="700" fill="white">Build Failed: demo-ai-ops #39</text>
+                <text x="264" y="93" font-family="Plus Jakarta Sans,sans-serif" font-size="9.5" fill="#ababad">Provider: log-analyzer  |  Model: gemini-3.5-flash-lite</text>
+
+                <!-- ── Attachment card (Slack attachment style) ── -->
+                <!-- Card background -->
+                <rect x="264" y="100" width="650" height="100" rx="4" fill="#222529"/>
+                <!-- Red left border -->
+                <rect x="264" y="100" width="4" height="100" rx="2" fill="#e01e5a"/>
+
+                <!-- Problem section -->
+                <text x="278" y="117" font-family="Plus Jakarta Sans,sans-serif" font-size="9" font-weight="800" fill="#e01e5a">🚨  PROBLEM</text>
+                <text x="278" y="131" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#c9d1d9">The Maven build failed during the test execution phase (mvn -B test)</text>
+                <text x="278" y="143" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#c9d1d9">due to 3 unit test failures in order-service project.</text>
+
+                <!-- Divider -->
+                <line x1="278" y1="150" x2="900" y2="150" stroke="#2c2d30" stroke-width="1"/>
+
+                <!-- Root Cause + Fix Steps - two columns -->
+                <text x="278" y="163" font-family="Plus Jakarta Sans,sans-serif" font-size="9" font-weight="800" fill="#d2a8ff">🔍  ROOT CAUSE</text>
+                <text x="278" y="175" font-family="JetBrains Mono,monospace" font-size="8" fill="#c9d1d9">1. calculateDiscount: NullPointerException</text>
+                <text x="278" y="186" font-family="JetBrains Mono,monospace" font-size="8" fill="#c9d1d9">2. Boundary logic applies 15% incorrectly</text>
+                <text x="278" y="197" font-family="JetBrains Mono,monospace" font-size="8" fill="#c9d1d9">3. confirmOrder: missing state validation</text>
+
+                <text x="570" y="163" font-family="Plus Jakarta Sans,sans-serif" font-size="9" font-weight="800" fill="#79c0ff">🛠️  FIX STEPS</text>
+                <text x="570" y="175" font-family="JetBrains Mono,monospace" font-size="8" fill="#c9d1d9">1. Add null check → BigDecimal.compareTo()</text>
+                <text x="570" y="186" font-family="JetBrains Mono,monospace" font-size="8" fill="#c9d1d9">2. Fix threshold: amount == threshold → apply</text>
+                <text x="570" y="197" font-family="JetBrains Mono,monospace" font-size="8" fill="#c9d1d9">3. Throw IllegalStateException for CANCELLED</text>
             </svg>
         </div>
         <div class="bridge">

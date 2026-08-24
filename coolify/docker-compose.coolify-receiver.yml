@@ -1,0 +1,30 @@
+# Compose file for running the Coolify webhook receiver alongside the AI Ops stack.
+# The receiver sits between Coolify and the backend, transforming Coolify's webhook
+# payload format into the POST /api/analyze-log contract.
+#
+# Usage (from repo root):
+#   docker compose -f docker-compose.yml -f coolify/docker-compose.coolify-receiver.yml up -d
+
+services:
+  coolify-receiver:
+    build:
+      context: ./coolify
+      dockerfile: Dockerfile.receiver
+    ports:
+      - "9000:9000"
+    environment:
+      AI_OPS_BACKEND_URL: http://backend:8000
+      RECEIVER_PORT: "9000"
+      # Optional: set a shared secret matching the one configured in Coolify
+      # Notifications → Webhook → Secret
+      RECEIVER_SECRET: ""
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python3", "-c",
+        "import urllib.request; urllib.request.urlopen('http://127.0.0.1:9000/health', timeout=3)"]
+      interval: 15s
+      timeout: 5s
+      retries: 3

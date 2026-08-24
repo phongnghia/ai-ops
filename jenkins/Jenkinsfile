@@ -1,0 +1,120 @@
+// AI Ops Log Analyzer — Jenkins declarative pipeline.
+//
+// On build failure the post { failure } block:
+//   1. Sources jenkins/scripts/analyze.sh — preprocesses the build log and
+//      calls POST /api/analyze-log on the backend.
+//   2. Runs jenkins/scripts/notify.py — formats and prints the analysis to
+//      the Jenkins console log.
+//
+// The backend handles all AI logic, LLM provider selection, RAG retrieval,
+// and Slack/Teams notifications. Jenkins only needs BACKEND_URL.
+//
+// Pipeline parameters:
+// LOCAL_WORKSPACE   Absolute path to the project on the Jenkins agent.
+// BACKEND_URL_PARAM Backend URL. Falls back to http://localhost:8000.
+// DEMO_PROJECT      "none", "java-order-service", or "java-order-service-test-only".
+// DEMO_FAIL_BUILD   Fail with a synthetic error for a quick AI analysis demo.
+
+pipeline {
+    agent any
+
+    parameters {
+        string(
+            name: 'LOCAL_WORKSPACE',
+            defaultValue: '/path/ai-ops',
+            description: 'Absolute path to the project on the Jenkins agent.',
+            trim: true,
+        )
+        string(
+            name: 'BACKEND_URL_PARAM',
+            defaultValue: 'http://localhost:8000',
+            description: 'Backend service URL.',
+            trim: true,
+        )
+        choice(
+            name: 'DEMO_PROJECT',
+            choices: ['none', 'java-order-service', 'java-order-service-test-only'],
+            description: '''Demo project options:
+  none                         — use DEMO_FAIL_BUILD for a quick synthetic failure
+  java-order-service           — compile + test via Docker (3 intentional test failures)
+  java-order-service-test-only — test only via Docker, reuses Docker cache (faster)''',
+        )
+        booleanParam(
+            name: 'DEMO_FAIL_BUILD',
+            defaultValue: false,
+            description: 'Quick demo: fail with a synthetic error. Ignored when DEMO_PROJECT is set.',
+        )
+    }
+
+    environment {
+        BACKEND_URL   = "${params.BACKEND_URL_PARAM ?: 'http://localhost:8000'}"
+        DEMO_PROJECT  = "${params.DEMO_PROJECT ?: 'none'}"
+        DEMO_FAIL_BUILD = "${params.DEMO_FAIL_BUILD ?: 'false'}"
+    }
+
+    stages {
+        stage('Build') {
+            steps {
+                echo "Build starting — demo project: ${params.DEMO_PROJECT}, synthetic failure: ${params.DEMO_FAIL_BUILD}"
+                script {
+                    def isJavaDemo = params.DEMO_PROJECT in ['java-order-service', 'java-order-service-test-only']
+
+                    if (isJavaDemo) {
+                        sh '''#!/usr/bin/env bash
+                        set -euo pipefail
+                        docker build \
+                            --target test \
+                            --tag order-service:test \
+                            "${LOCAL_WORKSPACE}/demo-app"
+                        '''
+                    } else if (params.DEMO_FAIL_BUILD == true) {
+                        sh '''
+                        echo "ERROR: Demo dependency installation failed"
+                        echo "ModuleNotFoundError: No module named demo_dependency"
+                        exit 1
+                        '''
+                    } else {
+                        echo 'No demo project selected and DEMO_FAIL_BUILD is false — build passes.'
+                    }
+                }
+            }
+        }
+
+        stage('Test') {
+            steps {
+                script {
+                    def isJavaDemo = params.DEMO_PROJECT in ['java-order-service', 'java-order-service-test-only']
+
+                    if (isJavaDemo) {
+                        echo 'Test stage skipped: tests ran inside the Docker build stage.'
+                    } else if (params.DEMO_FAIL_BUILD == true) {
+                        echo 'Test stage skipped: build already failed in Build stage.'
+                    } else {
+                        echo 'Test stage skipped: no demo project selected.'
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        failure {
+            script {
+                try {
+                    ansiColor('xterm') {
+                        sh '''#!/usr/bin/env bash
+                        set -euo pipefail
+                        readonly SCRIPTS_DIR="${LOCAL_WORKSPACE:?}/jenkins/scripts"
+
+                        source "${SCRIPTS_DIR}/analyze.sh"
+
+                        python3 "${SCRIPTS_DIR}/notify.py"
+                        '''
+                    }
+                } catch (Exception error) {
+                    echo "AI Ops analysis skipped: ${error.getMessage()}"
+                }
+            }
+        }
+    }
+}

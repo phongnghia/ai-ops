@@ -1,0 +1,112 @@
+# Docker Compose stack for the AI Ops Log Analyzer.
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    user: "999:999"
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  ollama:
+    image: ollama/ollama:0.9.6
+    volumes:
+      - ollamadata:/root/.ollama
+    environment:
+      # Limit to 1 concurrent inference to avoid OOM when running on CPU only.
+      OLLAMA_NUM_PARALLEL: "1"
+      # Keep model loaded between requests to avoid cold-start latency.
+      OLLAMA_KEEP_ALIVE: "10m"
+    deploy:
+      resources:
+        limits:
+          memory: 8g
+        reservations:
+          memory: 4g
+    profiles:
+      - ollama
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  ollama-model:
+    image: ollama/ollama:0.9.6
+    depends_on:
+      ollama:
+        condition: service_healthy
+    environment:
+      OLLAMA_HOST: http://ollama:11434
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-qwen2.5-coder:7b}
+    entrypoint: ["/bin/sh", "-c"]
+    command: ["ollama pull \"$${OLLAMA_MODEL}\""]
+    restart: "no"
+    profiles:
+      - ollama
+
+  litellm:
+    image: ghcr.io/berriai/litellm:main-v1.80.8-stable
+    entrypoint: ["/bin/sh", "-c"]
+    # generate_config.py reads provider enable flags and emits a LiteLLM config
+    # that includes only the active providers. This replaces the previous
+    # if/elif shell chain and scales cleanly to any number of providers.
+    command:
+      - >
+        python3 /app/generate_config.py > /tmp/litellm-config.yaml &&
+        exec litellm --config /tmp/litellm-config.yaml --port 4000
+    volumes:
+      - ./litellm/generate_config.py:/app/generate_config.py:ro
+    environment:
+      LITELLM_MASTER_KEY: ${LITELLM_API_KEY}
+      # Provider enable flags — set to true to include a provider.
+      OLLAMA_PROVIDER_ENABLE: ${OLLAMA_PROVIDER_ENABLE:-true}
+      AZURE_FOUNDRY_PROVIDER_ENABLE: ${AZURE_FOUNDRY_PROVIDER_ENABLE:-false}
+      GOOGLE_GEMINI_PROVIDER_ENABLE: ${GOOGLE_GEMINI_PROVIDER_ENABLE:-false}
+      # Ollama
+      OLLAMA_API_BASE: ${OLLAMA_API_BASE:-http://ollama:11434}
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-qwen2.5-coder:7b}
+      # Azure AI Foundry (Entra Service Principal)
+      AZURE_CLIENT_ID: ${AZURE_CLIENT_ID:-}
+      AZURE_CLIENT_SECRET: ${AZURE_CLIENT_SECRET:-}
+      AZURE_TENANT_ID: ${AZURE_TENANT_ID:-}
+      AZURE_API_BASE: ${AZURE_API_BASE:-}
+      AZURE_API_VERSION: ${AZURE_API_VERSION:-}
+      AZURE_MODEL: ${AZURE_MODEL:-gpt-4o-mini}
+      AZURE_SCOPE: ${AZURE_SCOPE:-https://cognitiveservices.azure.com/.default}
+      # Google Gemini (AI Studio API key)
+      GOOGLE_GEMINI_API_KEY: ${GOOGLE_GEMINI_API_KEY:-}
+      GOOGLE_GEMINI_MODEL: ${GOOGLE_GEMINI_MODEL:-gemini-3.5-flash-lite}
+    healthcheck:
+      test: ["CMD", "python", "-c", "import sys, urllib.request; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:4000/health/liveliness', timeout=4).status == 200 else 1)"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./backend
+    user: "1000:1000"
+    ports:
+      - "8000:8000"
+    env_file: [.env]
+    depends_on:
+      db:
+        condition: service_healthy
+      litellm:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import sys, urllib.request; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=4).status == 200 else 1)"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pgdata:
+  ollamadata:

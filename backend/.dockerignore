@@ -1,0 +1,49 @@
+# Keep the build context small and free of dev/test/secret files.
+# See coding-standards §15.1.
+
+# Python bytecode / caches
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+.eggs/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Tests and test tooling
+tests/
+test/
+**/test_*.py
+**/*_test.py
+.pytest_cache/
+.hypothesis/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Secrets and local configuration (never bake into the image)
+.env
+.env.*
+*.pem
+*.key
+
+# Database migrations tooling artifacts are applied out-of-band, not in the image build
+# (kept out of the runtime image; migrations run as a separate step)
+
+# Version control / IDE / OS noise
+.git/
+.gitignore
+.dockerignore
+Dockerfile
+.idea/
+.vscode/
+.DS_Store
+
+# Docs and build artifacts
+*.md
+dist/
+build/

@@ -1,0 +1,1721 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Ops Workshop · Zero to Hero</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --bg-main:    #ffffff;
+            --bg-sub:     #f8fafc;
+            --bg-dark:    #0f172a;
+            --primary:    #0062ff;
+            --primary-lt: #dbeafe;
+            --secondary:  #10b981;
+            --sec-lt:     #d1fae5;
+            --warn:       #f59e0b;
+            --warn-lt:    #fef3c7;
+            --danger:     #ef4444;
+            --text-dark:  #0f172a;
+            --text-muted: #475569;
+            --border-ui:  #e2e8f0;
+            --code-bg:    #1e293b;
+            --accent-soft: rgba(0,98,255,0.06);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: linear-gradient(135deg, #94a3b8 0%, #cbd5e1 100%);
+            display: flex; flex-direction: column; gap: 60px;
+            align-items: center; padding: 60px 20px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .slide-container {
+            width: 100%; max-width: 1280px; height: auto; min-height: 720px;
+            background: var(--bg-main); color: var(--text-dark);
+            position: relative; overflow: hidden;
+            display: flex; flex-direction: column;
+            padding: 60px 80px; border-radius: 24px;
+            box-shadow: 0 40px 100px -20px rgba(0,0,0,0.2);
+        }
+        .slide-header {
+            display: flex; align-items: flex-start; gap: 18px;
+            margin-bottom: 32px; padding-bottom: 18px;
+            border-bottom: 2px solid var(--border-ui);
+            flex-shrink: 0; flex-wrap: wrap;
+        }
+        .slide-number {
+            font-size: 13px; font-weight: 700; color: var(--primary);
+            background: var(--primary-lt); padding: 4px 14px;
+            border-radius: 50px; letter-spacing: 1px; text-transform: uppercase;
+            flex-shrink: 0;
+        }
+        .slide-title {
+            font-size: 30px; font-weight: 800; color: var(--text-dark);
+            letter-spacing: -0.5px; margin: 0; line-height: 1.2;
+        }
+        .slide-title span { color: var(--primary); }
+        .slide-tag {
+            margin-left: auto; font-size: 12px; font-weight: 700;
+            color: var(--text-muted); background: var(--bg-sub);
+            padding: 4px 12px; border-radius: 50px;
+            border: 1px solid var(--border-ui);
+            text-transform: uppercase; letter-spacing: 1px; flex-shrink: 0;
+        }
+        .content-area {
+            flex-grow: 1; display: flex; flex-direction: column;
+            justify-content: flex-start; width: 100%; z-index: 2;
+        }
+        h3 { font-size: 17px; font-weight: 700; color: var(--primary); margin-bottom: 10px; }
+        h4 { font-size: 14px; font-weight: 700; color: var(--text-dark); margin-bottom: 6px; }
+        p, li { font-size: 13px; line-height: 1.65; color: var(--text-muted); }
+        strong { color: var(--text-dark); }
+        code {
+            font-family: 'JetBrains Mono', monospace; font-size: 14px;
+            background: var(--code-bg); color: #7dd3fc;
+            padding: 2px 8px; border-radius: 6px; white-space: nowrap; display: inline;
+        }
+        .two-col   { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; align-items: start; }
+        .three-col { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 24px; }
+        .four-col  { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+        .card {
+            background: var(--bg-sub); border: 1px solid var(--border-ui);
+            border-radius: 20px; padding: 28px;
+            transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+        }
+        .card:hover { transform: translateY(-6px); border-color: var(--primary); box-shadow: 0 16px 40px rgba(0,98,255,0.08); }
+        .card i { font-size: 36px; color: var(--primary); margin-bottom: 16px; display: block; }
+        .card h4 { font-size: 18px; color: var(--text-dark); margin-bottom: 8px; }
+        .card p  { font-size: 15px; }
+        .card-green { border-color: var(--secondary); }
+        .card-green i { color: var(--secondary); }
+        .card-green:hover { border-color: var(--secondary); box-shadow: 0 16px 40px rgba(16,185,129,0.08); }
+        .card-warn { border-color: var(--warn); }
+        .card-warn i { color: var(--warn); }
+        .bullet-list { list-style: none; }
+        .bullet-list li { position: relative; padding-left: 28px; margin-bottom: 12px; font-size: 13px; }
+        .bullet-list li::before {
+            content: "\f058"; font-family: "Font Awesome 6 Free"; font-weight: 900;
+            position: absolute; left: 0; color: var(--secondary); font-size: 13px; top: 2px;
+        }
+        .bullet-list.danger li::before { color: var(--danger); content: "\f057"; }
+        .bullet-list.warn   li::before { color: var(--warn);   content: "\f071"; }
+        .bullet-list.sm li { margin-bottom: 10px; font-size: 13px; }
+        .code-block {
+            background: var(--code-bg); border-radius: 16px;
+            padding: 40px 28px 24px; font-family: 'JetBrains Mono', monospace;
+            font-size: 13px; line-height: 1.75; color: #e2e8f0;
+            overflow: auto; position: relative;
+        }
+        .code-block .cb-label {
+            display: block; position: absolute; top: 12px; right: 16px;
+            font-size: 11px; color: #64748b;
+            font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 1px; white-space: nowrap;
+        }
+        .code-block pre {
+            margin: 0; padding: 0; white-space: pre-wrap; word-break: break-word;
+            font-family: inherit; font-size: inherit; line-height: inherit;
+            color: inherit; background: none; overflow: hidden;
+        }
+        .code-block .kw  { color: #c084fc; }
+        .code-block .str { color: #a5f3fc; }
+        .code-block .cmt { color: #475569; font-style: italic; }
+        .code-block .num { color: #fbbf24; }
+        .code-block .fn  { color: #f0abfc; }
+        .code-block .tag { color: #f472b6; }
+        .code-block .ok  { color: #4ade80; }
+        .code-block .err { color: #f87171; }
+        .flow-box {
+            background: var(--primary-lt); border: 2px solid var(--primary);
+            border-radius: 12px; padding: 12px 20px; font-size: 14px;
+            font-weight: 700; color: #1e40af; text-align: center;
+        }
+        .flow-box.green { background: var(--sec-lt);  border-color: var(--secondary); color: var(--secondary); }
+        .flow-box.warn  { background: var(--warn-lt); border-color: var(--warn);      color: #92400e; }
+        .flow-box.dark  { background: var(--bg-dark); border-color: #334155;          color: #e2e8f0; }
+        .flow-arrow { font-size: 20px; color: var(--text-muted); padding: 0 8px; flex-shrink: 0; }
+        .badge { display: inline-block; padding: 4px 12px; border-radius: 50px; font-size: 13px; font-weight: 700; margin: 3px; }
+        .badge-blue  { background: var(--primary-lt); color: var(--primary); }
+        .badge-green { background: var(--sec-lt);     color: #065f46; }
+        .badge-warn  { background: var(--warn-lt);    color: #92400e; }
+        .badge-dark  { background: #1e293b;           color: #94a3b8; }
+        .badge-red   { background: #fee2e2;           color: #991b1b; }
+        .compare-table { width: 100%; border-collapse: collapse; font-size: 15px; }
+        .compare-table th {
+            background: var(--primary); color: white;
+            padding: 12px 16px; text-align: left; font-weight: 700;
+        }
+        .compare-table th:first-child { border-radius: 12px 0 0 0; }
+        .compare-table th:last-child  { border-radius: 0 12px 0 0; }
+        .compare-table td { padding: 11px 16px; border-bottom: 1px solid var(--border-ui); }
+        .compare-table tr:nth-child(even) td { background: var(--bg-sub); }
+        .compare-table .good { color: var(--secondary); font-weight: 700; }
+        .compare-table .bad  { color: var(--danger);    font-weight: 700; }
+        .compare-table .mid  { color: var(--warn);      font-weight: 700; }
+        .circle-decor {
+            position: absolute; width: 500px; height: 500px;
+            background: var(--accent-soft); border-radius: 50%;
+            top: -150px; right: -150px; z-index: 0; pointer-events: none;
+        }
+        .dot-grid {
+            position: absolute; bottom: 0; left: 0; width: 200px; height: 200px;
+            background-image: radial-gradient(circle, #cbd5e1 1.5px, transparent 1.5px);
+            background-size: 20px 20px; opacity: 0.5; z-index: 0; pointer-events: none;
+        }
+        .title-layout {
+            display: flex; flex-direction: column; justify-content: center;
+            height: 100%; z-index: 2;
+        }
+        .title-layout .eyebrow {
+            text-transform: uppercase; letter-spacing: 5px; font-weight: 700;
+            font-size: 14px; color: var(--primary); margin-bottom: 20px;
+        }
+        .title-layout h1 {
+            font-size: 64px; font-weight: 800; line-height: 1.1;
+            color: var(--text-dark); margin-bottom: 24px; letter-spacing: -2px;
+        }
+        .title-layout h1 span { color: var(--primary); }
+        .title-layout .subtitle {
+            font-size: 20px; color: var(--text-muted); max-width: 900px;
+            line-height: 1.6; margin-bottom: 36px;
+        }
+        .tag-row { display: flex; gap: 12px; flex-wrap: wrap; }
+        .tag-pill {
+            padding: 8px 20px; background: var(--bg-sub);
+            border: 1px solid var(--border-ui); border-radius: 50px;
+            font-size: 14px; font-weight: 700; color: var(--text-muted);
+        }
+        .section-slide { background: var(--bg-dark) !important; color: white; }
+        .section-slide .title-layout { padding-top: 20px; }
+        .section-slide .section-label {
+            font-size: 13px; font-weight: 700; letter-spacing: 4px;
+            text-transform: uppercase; color: var(--secondary); margin-bottom: 20px;
+        }
+        .section-slide h2 {
+            font-size: 72px; font-weight: 800; color: white;
+            letter-spacing: -2px; line-height: 1.05; margin-bottom: 24px;
+        }
+        .section-slide h2 span { color: var(--primary); }
+        .section-slide p { color: #94a3b8; font-size: 22px; max-width: 700px; }
+        .highlight-box {
+            background: linear-gradient(135deg, var(--primary-lt), #eff6ff);
+            border: 1px solid #bfdbfe; border-radius: 16px; padding: 14px 18px; margin-top: 12px;
+        }
+        .highlight-box p { font-size: 13px; color: #1e40af; }
+        .highlight-box strong { color: #1e3a8a; }
+        .highlight-box.green {
+            background: linear-gradient(135deg, var(--sec-lt), #f0fdf4);
+            border-color: #86efac;
+        }
+        .highlight-box.green p { color: #166534; }
+        .highlight-box.green strong { color: #065f46; }
+        .highlight-box.warn {
+            background: linear-gradient(135deg, var(--warn-lt), #fffbeb);
+            border-color: #fcd34d;
+        }
+        .highlight-box.warn p { color: #92400e; }
+        .def-bar {
+            font-size: 13px; line-height: 1.7; color: #1e40af;
+            background: linear-gradient(135deg, #dbeafe 0%, #eff6ff 100%);
+            border-left: 4px solid var(--primary); border-radius: 0 10px 10px 0;
+            padding: 12px 18px; margin-bottom: 16px; flex-shrink: 0;
+        }
+        .def-bar strong { color: #1e3a8a; font-weight: 800; }
+        .def-bar em     { color: var(--primary); font-style: normal; font-weight: 700; }
+        .def-bar code   { font-size: 12px; background: rgba(0,98,255,0.12); color: #1e40af; }
+        .path-step {
+            display: flex; align-items: flex-start; gap: 24px; margin-bottom: 16px;
+            background: var(--bg-sub); padding: 18px 22px;
+            border-radius: 16px; border-left: 4px solid var(--primary);
+        }
+        .path-step.green { border-left-color: var(--secondary); }
+        .path-step.warn  { border-left-color: var(--warn); }
+        .path-step.red   { border-left-color: var(--danger); }
+        .path-step.compact { padding: 12px 16px; margin-bottom: 10px; }
+        .step-num {
+            width: 44px; height: 44px; border-radius: 50%; background: var(--primary);
+            color: white; display: flex; align-items: center; justify-content: center;
+            font-weight: 800; font-size: 18px; flex-shrink: 0;
+        }
+        .step-num.green { background: var(--secondary); }
+        .step-num.warn  { background: var(--warn); }
+        .step-num.red   { background: var(--danger); }
+        .step-num.sm { width: 36px; height: 36px; font-size: 15px; }
+        .metric-card {
+            background: var(--bg-sub); border: 1px solid var(--border-ui);
+            border-radius: 16px; padding: 24px; text-align: center;
+        }
+        .metric-card .metric-val {
+            font-size: 42px; font-weight: 800; color: var(--primary);
+            line-height: 1; margin-bottom: 6px;
+        }
+        .metric-card .metric-label { font-size: 14px; color: var(--text-muted); font-weight: 600; }
+        .example-note {
+            display: inline-block;
+            background: #f0fdf4; border: 1px solid #86efac; border-radius: 10px;
+            padding: 8px 14px; font-size: 13px; font-weight: 600;
+            color: #166534; margin-bottom: 12px; line-height: 1.5;
+        }
+        .fun-note {
+            display: inline-block;
+            background: #fdf4ff; border: 1px solid #d8b4fe; border-radius: 10px;
+            padding: 8px 14px; font-size: 13px; font-weight: 600;
+            color: #7e22ce; margin-bottom: 12px; line-height: 1.5;
+        }
+        .bridge {
+            margin-top: 20px; padding: 14px 20px;
+            border-top: 2px solid var(--border-ui);
+            display: flex; align-items: center; gap: 8px;
+            background: var(--bg-main);
+        }
+        .badge-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 28px; }
+        .badge-row .sep { width: 1px; height: 20px; background: var(--border-ui); margin: 0 6px; flex-shrink: 0; }
+        .section-slide { min-height: 720px; }
+        .content-area { padding-bottom: 20px; }
+        .terminal-output {
+            background: #0d1117; border-radius: 12px; padding: 20px 24px;
+            font-family: 'JetBrains Mono', monospace; font-size: 12.5px;
+            line-height: 1.8; color: #c9d1d9; border: 1px solid #30363d;
+            position: relative;
+        }
+        .terminal-output .t-prompt { color: #58a6ff; }
+        .terminal-output .t-ok     { color: #3fb950; }
+        .terminal-output .t-err    { color: #f85149; }
+        .terminal-output .t-warn   { color: #d29922; }
+        .terminal-output .t-info   { color: #8b949e; }
+        .terminal-output .t-ai     { color: #bc8cff; font-weight: 700; }
+        .terminal-title {
+            position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
+            font-size: 11px; color: #8b949e; font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+
+<!-- ═══ SLIDE 1 — TITLE ═══ -->
+<div class="slide-container">
+    <div class="circle-decor" style="background:rgba(0,98,255,0.07);"></div>
+    <div class="dot-grid" style="opacity:0.3;"></div>
+    <div class="title-layout">
+        <p class="eyebrow">Technical Workshop · 2026</p>
+        <h1 style="font-size:58px;">AI-Ops <span>Không Khó</span><br>
+            <span style="font-size:38px; color:var(--text-muted); font-weight:700; letter-spacing:-1px;">Zero to Hero</span>
+        </h1>
+        <p class="subtitle" style="font-size:18px; margin-bottom:28px;">
+            Câu chuyện về một hệ thống CI/CD <strong>tự phân tích lỗi của chính mình</strong> —
+            không cần kỹ sư thức đêm đọc log nữa.
+        </p>
+        <div class="tag-row" style="margin-bottom:24px;">
+            <span class="tag-pill">#AIOps</span>
+            <span class="tag-pill">#LLM</span>
+            <span class="tag-pill">#Jenkins</span>
+            <span class="tag-pill">#RAG</span>
+            <span class="tag-pill">#LiteLLM</span>
+            <span class="tag-pill">#FastAPI</span>
+            <span class="tag-pill">#k8sgpt</span>
+            <span class="tag-pill">#HolmesGPT</span>
+        </div>
+        <div class="badge-row">
+            <span class="badge badge-blue"><i class="fa-solid fa-robot" style="margin-right:5px;"></i>Agentic AI</span>
+            <span class="badge badge-green"><i class="fa-solid fa-shield-halved" style="margin-right:5px;"></i>Self-Hosted</span>
+            <span class="badge badge-warn"><i class="fa-solid fa-bolt" style="margin-right:5px;"></i>Production-Ready</span>
+            <div class="sep"></div>
+            <span style="font-size:13px; color:var(--text-muted); white-space:nowrap;">Ollama · Azure AI Foundry · Google Gemini</span>
+        </div>
+    </div>
+</div>
+
+<!-- ═══ SLIDE 2 — AGENDA ═══ -->
+<div class="slide-container">
+    <div class="slide-header">
+        <span class="slide-number">Agenda</span>
+        <h2 class="slide-title">Lộ trình <span>7 chặng</span> hôm nay</h2>
+    </div>
+    <div class="content-area">
+        <p style="font-size:14px;color:var(--text-muted);margin-bottom:16px;line-height:1.6;">Workshop này được thiết kế như <strong>một câu chuyện</strong> liên tục — từ landscape thị trường thực tế, qua nỗi đau, đến kiến trúc và code. Mỗi chặng giải quyết vấn đề mà chặng trước đặt ra.</p>
+        <div class="four-col" style="gap:12px; margin-bottom:12px;">
+            <div class="card" style="border-top:4px solid #64748b; padding:18px;">
+                <i class="fa-solid fa-globe" style="font-size:20px;color:#64748b;margin-bottom:8px;"></i>
+                <h4 style="font-size:14px;">AI-Ops Landscape</h4>
+                <p style="font-size:11px;">Dynatrace, Datadog, PagerDuty đang làm gì? Tại sao tự build thay vì mua SaaS?</p>
+                <div style="margin-top:6px;"><span class="badge badge-dark" style="font-size:10px;">Context</span></div>
+            </div>
+            <div class="card" style="border-top:4px solid #ef4444; padding:18px;">
+                <i class="fa-solid fa-fire" style="font-size:20px;color:#ef4444;margin-bottom:8px;"></i>
+                <h4 style="font-size:14px;">Vấn đề thực tế</h4>
+                <p style="font-size:11px;">Log CI/CD quá nhiều. Kỹ sư mất giờ. Industry data: 23 min MTTR, 68% alert noise.</p>
+                <div style="margin-top:6px;"><span class="badge badge-red" style="font-size:10px;">Pain Points</span></div>
+            </div>
+            <div class="card" style="border-top:4px solid #3b82f6; padding:18px;">
+                <i class="fa-solid fa-brain" style="font-size:20px;color:#3b82f6;margin-bottom:8px;"></i>
+                <h4 style="font-size:14px;">Nền tảng AI</h4>
+                <p style="font-size:11px;">LLM, RAG, AI Gateway — 3 khái niệm cốt lõi + so sánh providers.</p>
+                <div style="margin-top:6px;"><span class="badge badge-blue" style="font-size:10px;">Concepts</span></div>
+            </div>
+            <div class="card" style="border-top:4px solid #10b981; padding:18px;">
+                <i class="fa-solid fa-sitemap" style="font-size:20px;color:#10b981;margin-bottom:8px;"></i>
+                <h4 style="font-size:14px;">Kiến trúc + Code</h4>
+                <p style="font-size:11px;">5 services, docker-compose. Bash → FastAPI → Prompt → LiteLLM. Code thật.</p>
+                <div style="margin-top:6px;"><span class="badge badge-green" style="font-size:10px;">Architecture + Code</span></div>
+            </div>
+        </div>
+        <div class="three-col" style="gap:12px;">
+            <div class="card" style="border-top:4px solid #f59e0b; padding:18px;">
+                <i class="fa-solid fa-flask" style="font-size:20px;color:#f59e0b;margin-bottom:8px;"></i>
+                <h4 style="font-size:14px;">Demo Live</h4>
+                <p style="font-size:11px;">Spring Boot demo-app 3 lỗi thật → Jenkins trigger → AI phân tích trực tiếp trên console.</p>
+                <div style="margin-top:6px;"><span class="badge badge-warn" style="font-size:10px;">Demo</span></div>
+            </div>
+            <div class="card" style="border-top:4px solid #a855f7; padding:18px;">
+                <i class="fa-solid fa-rocket" style="font-size:20px;color:#a855f7;margin-bottom:8px;"></i>
+                <h4 style="font-size:14px;">Roadmap + OSS Ecosystem</h4>
+                <p style="font-size:11px;">v2 MCP + Agentic. k8sgpt, HolmesGPT, Keptn, Robusta — những gì cộng đồng đang làm.</p>
+                <div style="margin-top:6px;"><span class="badge" style="background:#fdf4ff;color:#7e22ce;font-size:10px;">Roadmap</span></div>
+            </div>
+            <div class="card" style="border-top:4px solid #10b981; padding:18px;">
+                <i class="fa-solid fa-scale-balanced" style="font-size:20px;color:#10b981;margin-bottom:8px;"></i>
+                <h4 style="font-size:14px;">So sánh Build vs Buy</h4>
+                <p style="font-size:11px;">Khi nào dùng Dynatrace/Datadog, khi nào nên tự build. Trade-offs rõ ràng.</p>
+                <div style="margin-top:6px;"><span class="badge badge-green" style="font-size:10px;">Decision</span></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ═══ SLIDE 2b — AI-OPS LANDSCAPE ═══ -->
+<div class="slide-container">
+    <div class="slide-header">
+        <span class="slide-number">02b</span>
+        <h2 class="slide-title">AI-Ops Landscape — <span>Thị trường đang làm gì?</span></h2>
+        <span class="slide-tag">Bối cảnh · Industry</span>
+    </div>
+    <div class="content-area">
+        <div class="def-bar">
+            <strong>AIOps (Artificial Intelligence for IT Operations)</strong> — thuật ngữ do Gartner đặt ra năm 2017. Không phải "AI + Ops" mà là <em>dùng AI/ML để tự động hóa và nâng cao IT operations</em>: giám sát, phát hiện bất thường, tương quan sự kiện, tự động phục hồi. Năm 2024, thị trường AIOps toàn cầu đạt ~$3.5B và dự báo tăng 3x vào 2029.
+        </div>
+        <div class="three-col" style="gap:16px; margin-bottom:16px;">
+            <div>
+                <p style="font-size:12px;font-weight:700;color:var(--text-dark);margin-bottom:8px;"><i class="fa-solid fa-eye" style="color:#3b82f6;margin-right:6px;"></i>Observability + AI</p>
+                <div style="display:flex;flex-direction:column;gap:6px;">
+                    <div style="background:#eff6ff;border-radius:8px;padding:10px 12px;border-left:3px solid #3b82f6;">
+                        <p style="font-size:12px;font-weight:700;color:#1e40af;margin-bottom:3px;">Dynatrace Davis AI</p>
+                        <p style="font-size:11px;color:#3b82f6;margin:0;">Causal AI — tự động tương quan hàng nghìn events để tìm root cause. Không cần manual correlation. Đã được dùng tại BMW, Vodafone.</p>
+                    </div>
+                    <div style="background:#eff6ff;border-radius:8px;padding:10px 12px;border-left:3px solid #3b82f6;">
+                        <p style="font-size:12px;font-weight:700;color:#1e40af;margin-bottom:3px;">Datadog Watchdog + AI Assistant</p>
+                        <p style="font-size:11px;color:#3b82f6;margin:0;">Tự động phát hiện anomaly trên metrics/logs/traces. AI Assistant (GPT-4) cho phép query bằng ngôn ngữ tự nhiên: "Tại sao p99 latency tăng?"</p>
+                    </div>
+                    <div style="background:#eff6ff;border-radius:8px;padding:10px 12px;border-left:3px solid #3b82f6;">
+                        <p style="font-size:12px;font-weight:700;color:#1e40af;margin-bottom:3px;">New Relic AI</p>
+                        <p style="font-size:11px;color:#3b82f6;margin:0;">NRQL AI — tự động suggest query. Anomaly detection + alert correlation. Giao diện chat để debug incident.</p>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <p style="font-size:12px;font-weight:700;color:var(--text-dark);margin-bottom:8px;"><i class="fa-solid fa-bell" style="color:#ef4444;margin-right:6px;"></i>Incident Management + AI</p>
+                <div style="display:flex;flex-direction:column;gap:6px;">
+                    <div style="background:#fff1f2;border-radius:8px;padding:10px 12px;border-left:3px solid #ef4444;">
+                        <p style="font-size:12px;font-weight:700;color:#991b1b;margin-bottom:3px;">PagerDuty AIOps</p>
+                        <p style="font-size:11px;color:#7f1d1d;margin:0;">Alert noise reduction — filter 90% redundant alerts. Auto-triage incidents. "Intelligent alert grouping" gom nhiều alerts thành 1 incident.</p>
+                    </div>
+                    <div style="background:#fff1f2;border-radius:8px;padding:10px 12px;border-left:3px solid #ef4444;">
+                        <p style="font-size:12px;font-weight:700;color:#991b1b;margin-bottom:3px;">OpsRamp AI Ops</p>
+                        <p style="font-size:11px;color:#7f1d1d;margin:0;">Hybrid infrastructure monitoring với AI-driven root cause analysis. Predict failures trước khi xảy ra dựa trên historical patterns.</p>
+                    </div>
+                    <div style="background:#fff1f2;border-radius:8px;padding:10px 12px;border-left:3px solid #ef4444;">
+                        <p style="font-size:12px;font-weight:700;color:#991b1b;margin-bottom:3px;">BigPanda AIOps</p>
+                        <p style="font-size:11px;color:#7f1d1d;margin:0;">Event correlation từ nhiều nguồn (Nagios, Zabbix, CloudWatch). ML model tự học topology để phân loại incident.</p>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <p style="font-size:12px;font-weight:700;color:var(--text-dark);margin-bottom:8px;"><i class="fa-solid fa-code-branch" style="color:#10b981;margin-right:6px;"></i>CI/CD + AI</p>
+                <div style="display:flex;flex-direction:column;gap:6px;">
+                    <div style="background:#f0fdf4;border-radius:8px;padding:10px 12px;border-left:3px solid #10b981;">
+                        <p style="font-size:12px;font-weight:700;color:#166534;margin-bottom:3px;">GitHub Copilot for CLI</p>
+                        <p style="font-size:11px;color:#065f46;margin:0;"><code>gh copilot explain</code> giải thích lỗi terminal. <code>gh copilot suggest</code> đề xuất lệnh fix. Tích hợp trực tiếp vào workflow của developer.</p>
+                    </div>
+                    <div style="background:#f0fdf4;border-radius:8px;padding:10px 12px;border-left:3px solid #10b981;">
+                        <p style="font-size:12px;font-weight:700;color:#166534;margin-bottom:3px;">Harness AI / AIDA</p>
+                        <p style="font-size:11px;color:#065f46;margin:0;">Phân tích pipeline failure trong Harness CI/CD. Tự động suggest remediation. AIDA (AI Development Assistant) review PR và propose fixes.</p>
+                    </div>
+                    <div style="background:#f0fdf4;border-radius:8px;padding:10px 12px;border-left:3px solid #10b981;">
+                        <p style="font-size:12px;font-weight:700;color:#166534;margin-bottom:3px;">Coralogix AI + Loggly</p>
+                        <p style="font-size:11px;color:#065f46;margin:0;">Log anomaly detection với ML. "Loggly Insight" tự phân loại patterns. Coralogix dùng Streama™ ML để phát hiện log outliers realtime.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div style="background:linear-gradient(135deg,#fef3c7,#fffbeb);border:1px solid #fcd34d;border-radius:12px;padding:12px 18px;display:flex;align-items:flex-start;gap:12px;">
+            <i class="fa-solid fa-lightbulb" style="color:#f59e0b;font-size:20px;flex-shrink:0;margin-top:2px;"></i>
+            <div>
+                <p style="font-size:13px;font-weight:700;color:#92400e;margin-bottom:4px;">Điểm khác biệt của workshop này so với các tool trên</p>
+                <p style="font-size:12px;color:#92400e;margin:0;">Dynatrace, Datadog, PagerDuty là <strong>SaaS đắt tiền</strong> ($50–$500/host/month), closed-source, và <strong>không flexible</strong> với Jenkins/private infra. Workshop này: <strong>self-hosted, open-source, miễn phí</strong>, tích hợp vào bất kỳ CI/CD nào bằng vài dòng bash.</p>
+            </div>
+        </div>
+        <div class="bridge">
+            <i class="fa-solid fa-arrow-right" style="color:var(--primary);font-size:13px;"></i>
+            <p style="font-size:13px;color:var(--text-muted);margin:0;"><strong style="color:var(--primary);">Tiếp theo:</strong> Hiểu landscape xong — bắt đầu từ nỗi đau thực tế mà chính chúng ta sẽ giải quyết.</p>
+        </div>
+    </div>
+</div>
+
+<!-- ═══ SECTION A DIVIDER ═══ -->
+<div class="slide-container section-slide">
+    <div class="dot-grid" style="opacity:0.15;"></div>
+    <div class="title-layout">
+        <p class="section-label">Chặng 1 · Vấn đề</p>
+        <h2>Build fail lúc<br>2 giờ <span>sáng</span></h2>
+        <p>Trước khi học giải pháp — hãy cảm nhận nỗi đau thực sự của người vận hành CI/CD hàng ngày.</p>
+    </div>
+</div>
+
+<!-- ═══ SLIDE 3 — THE PAIN ═══ -->
+<div class="slide-container">
+    <div class="slide-header">
+        <span class="slide-number">03</span>
+        <h2 class="slide-title">Khi <span>Jenkins Build Fail</span> lúc 2 giờ sáng</h2>
+        <span class="slide-tag">Vấn đề thực tế</span>
+    </div>
+    <div class="content-area">
+        <div class="two-col" style="gap:40px;">
+            <div>
+                <div class="example-note"><i class="fa-solid fa-moon"></i> Hãy tưởng tượng: 2 giờ sáng ngày trước release. Jenkins báo đỏ. Bạn làm gì?</div>
+                <ul class="bullet-list danger sm" style="margin-top:12px;">
+                    <li><strong>Mở Jenkins Console Output:</strong> thấy 3.000 dòng log. Lỗi thật nằm đâu đó ở giữa, giữa hàng trăm dòng INFO và WARNING không liên quan.</li>
+                    <li><strong>Tốn 15–30 phút:</strong> chỉ để tìm đúng dòng <code>Exception</code> hoặc <code>BUILD FAILED</code>, chưa kể thời gian phân tích nguyên nhân gốc.</li>
+                    <li><strong>Context Switching:</strong> copy-paste log sang Slack hỏi đồng nghiệp, mở IDE kiểm tra code, đọc docs dependency — mất thêm 30 phút nữa.</li>
+                    <li><strong>Security Risk:</strong> log thô chứa connection strings, tokens, credentials — nếu paste lên ChatGPT hay Slack, dữ liệu nhạy cảm bị lộ.</li>
+                    <li><strong>Lặp đi lặp lại:</strong> lỗi tương tự xuất hiện lần nữa sau 2 tuần — không ai nhớ giải pháp cũ, phải debug từ đầu.</li>
+                </ul>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:12px;">
+                    <div style="background:#fff1f2;border-radius:8px;padding:8px 10px;text-align:center;">
+                        <p style="font-size:18px;font-weight:800;color:#ef4444;margin:0;">23 min</p>
+                        <p style="font-size:10px;color:#991b1b;margin:0;">MTTR trung bình khi debug thủ công (Google SRE Report 2023)</p>
+                    </div>
+                    <div style="background:#fff1f2;border-radius:8px;padding:8px 10px;text-align:center;">
+                        <p style="font-size:18px;font-weight:800;color:#ef4444;margin:0;">68%</p>
+                        <p style="font-size:10px;color:#991b1b;margin:0;">kỹ sư nói alert noise là vấn đề số 1 (PagerDuty State of Digital Ops 2023)</p>
+                    </div>
+                </div>
+                <div class="highlight-box warn" style="margin-top:10px;">
+                    <p><strong>Kết luận:</strong> Đây không phải vấn đề kỹ năng — đây là vấn đề <strong>công cụ</strong>. AI có thể đọc 3.000 dòng log trong 3 giây và đưa ra 3 bước sửa lỗi rõ ràng.</p>
+                </div>
+            </div>
+            <div>
+                <svg viewBox="0 0 420 400" xmlns="http://www.w3.org/2000/svg" style="width:100%;border-radius:16px;">
+                    <rect width="420" height="400" fill="#0d1117" rx="16"/>
+                    <text x="210" y="24" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#8b949e">JENKINS CONSOLE OUTPUT — Build #142</text>
+                    <text x="20" y="48"  font-family="JetBrains Mono,monospace" font-size="9" fill="#3fb950">[INFO] Scanning for projects...</text>
+                    <text x="20" y="64"  font-family="JetBrains Mono,monospace" font-size="9" fill="#3fb950">[INFO] Building order-service 1.0.0</text>
+                    <text x="20" y="80"  font-family="JetBrains Mono,monospace" font-size="9" fill="#3fb950">[INFO] --- maven-compiler-plugin:3.11.0 ---</text>
+                    <text x="20" y="96"  font-family="JetBrains Mono,monospace" font-size="9" fill="#3fb950">[INFO] Compiling 12 source files...</text>
+                    <text x="20" y="112" font-family="JetBrains Mono,monospace" font-size="9" fill="#8b949e">... 847 more lines of INFO ...</text>
+                    <rect x="10" y="122" width="400" height="90" rx="6" fill="#1a0000" stroke="#f85149" stroke-width="1.5"/>
+                    <text x="20" y="140" font-family="JetBrains Mono,monospace" font-size="9" fill="#f85149">[ERROR] COMPILATION ERROR</text>
+                    <text x="20" y="156" font-family="JetBrains Mono,monospace" font-size="9" fill="#f85149">[ERROR] OrderService.java:[47,8]</text>
+                    <text x="20" y="172" font-family="JetBrains Mono,monospace" font-size="9" fill="#f85149">cannot find symbol: calculateDiscount</text>
+                    <text x="20" y="188" font-family="JetBrains Mono,monospace" font-size="9" fill="#f85149">[ERROR] 3 errors</text>
+                    <text x="20" y="204" font-family="JetBrains Mono,monospace" font-size="9" fill="#d29922">    ↑ Lỗi thật — nằm ở dòng 848/3000</text>
+                    <text x="20" y="228" font-family="JetBrains Mono,monospace" font-size="9" fill="#8b949e">... 2100 more lines of stack trace ...</text>
+                    <text x="20" y="244" font-family="JetBrains Mono,monospace" font-size="9" fill="#3fb950">[INFO] Tests run: 0</text>
+                    <text x="20" y="260" font-family="JetBrains Mono,monospace" font-size="9" fill="#3fb950">[INFO] Skipping install phase</text>
+                    <text x="20" y="276" font-family="JetBrains Mono,monospace" font-size="9" fill="#8b949e">... 53 more lines ...</text>
+                    <rect x="10" y="288" width="400" height="34" rx="6" fill="#1a0000" stroke="#f85149" stroke-width="2"/>
+                    <text x="210" y="309" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" font-weight="700" fill="#f85149">BUILD FAILURE — Total time: 23.4s</text>
+                    <rect x="10" y="336" width="400" height="50" rx="8" fill="#161b22" stroke="#30363d" stroke-width="1"/>
+                    <text x="210" y="356" text-anchor="middle" font-family="Plus Jakarta Sans,sans-serif" font-size="11" font-weight="700" fill="#d29922">⏱ Kỹ sư mất 20 phút đọc log này</text>
+                    <text x="210" y="374" text-anchor="middle" font-family="Plus Jakarta Sans,sans-serif" font-size="10" fill="#8b949e">AI cần 3 giây để phân tích và đưa ra giải pháp</text>
+                </svg>
+            </div>
+        </div>
+        <div class="bridge">
+            <i class="fa-solid fa-arrow-right" style="color:var(--primary);font-size:13px;"></i>
+            <p style="font-size:13px;color:var(--text-muted);margin:0;"><strong style="color:var(--primary);">Tiếp theo:</strong> Vấn đề rõ rồi — nhưng trước khi xây giải pháp, cần hiểu 3 khái niệm AI cốt lõi: LLM, RAG, và AI Gateway.</p>
+        </div>
+    </div>
+</div>
+
+
+<!-- ═══ SECTION B DIVIDER ═══ -->
+<div class="slide-container section-slide">
+    <div class="dot-grid" style="opacity:0.15;"></div>
+    <div class="title-layout">
+        <p class="section-label">Chặng 2 · Nền tảng AI</p>
+        <h2>LLM, RAG &amp;<br>AI <span>Gateway</span></h2>
+        <p>Ba khái niệm cốt lõi — hiểu chúng trước khi đọc một dòng code nào.</p>
+    </div>
+</div>
+
+<!-- ═══ SLIDE 4 — LLM CONCEPT ═══ -->
+<div class="slide-container">
+    <div class="slide-header">
+        <span class="slide-number">04</span>
+        <h2 class="slide-title">LLM — <span>Không phải Magic, Chỉ là Pattern Matching</span></h2>
+        <span class="slide-tag">Nền tảng AI · LLM</span>
+    </div>
+    <div class="content-area">
+        <div class="def-bar">
+            <strong>LLM (Large Language Model)</strong> là mô hình được train trên lượng text khổng lồ để <em>dự đoán token tiếp theo</em>. Nó không "hiểu" — nó nhận ra pattern. Nhưng vì nó đã đọc toàn bộ StackOverflow, GitHub issues, và docs, nó rất giỏi phân tích lỗi kỹ thuật.
+        </div>
+        <div class="two-col" style="gap:32px; align-items:start; margin-bottom:16px;">
+            <div>
+                <h3>Tại sao LLM phù hợp với bài toán log analysis?</h3>
+                <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;">
+                    <div style="background:#f0fdf4;border-radius:10px;padding:11px 14px;border-left:3px solid #10b981;">
+                        <p style="font-size:12.5px;color:#065f46;margin:0;"><strong>Đã thấy lỗi này rồi:</strong> LLM được train trên hàng triệu GitHub issues, Stack Overflow, Maven/npm error reports. <code>cannot find symbol</code> hay <code>NullPointerException</code> — nó biết ngay nguyên nhân và cách sửa.</p>
+                    </div>
+                    <div style="background:#eff6ff;border-radius:10px;padding:11px 14px;border-left:3px solid #3b82f6;">
+                        <p style="font-size:12.5px;color:#1e40af;margin:0;"><strong>Natural Language Output:</strong> Thay vì bạn đọc stack trace, LLM dịch sang ngôn ngữ tự nhiên: "Lỗi do method <code>calculateDiscount</code> không tồn tại trong class, có thể bị đổi tên thành <code>applyDiscount</code> ở commit #f3a9..."</p>
+                    </div>
+                    <div style="background:#fdf4ff;border-radius:10px;padding:11px 14px;border-left:3px solid #a855f7;">
+                        <p style="font-size:12.5px;color:#7e22ce;margin:0;"><strong>Flexible Context Window:</strong> LLM hiện đại có context window 128K–1M tokens — có thể đọc toàn bộ log file, test output, và stack trace trong một request duy nhất.</p>
+                    </div>
+                </div>
+                <div class="fun-note"><i class="fa-solid fa-lightbulb"></i> LLM không cần training thêm để phân tích log — chỉ cần Prompt Engineering tốt là đủ. Đây là điểm mạnh của approach này.</div>
+            </div>
+            <div>
+                <h3>Các model trong demo này</h3>
+                <table class="compare-table" style="font-size:12px;">
+                    <thead><tr><th>Model</th><th>Provider</th><th>Tốc độ</th><th>Chi phí</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>qwen2.5-coder:7b</strong></td><td>Ollama (local)</td><td class="bad">60–120s CPU</td><td class="good">Miễn phí</td></tr>
+                        <tr><td><strong>gemini-2.0-flash</strong></td><td>Google Gemini</td><td class="good">3–5s</td><td class="good">Free tier</td></tr>
+                        <tr><td><strong>gpt-4o-mini</strong></td><td>Azure Foundry</td><td class="good">2–4s</td><td class="mid">Tốn tiền</td></tr>
+                    </tbody>
+                </table>
+                <div class="highlight-box" style="margin-top:14px;">
+                    <p><strong>LiteLLM Gateway</strong> đứng giữa backend và các model này — backend chỉ gọi 1 endpoint duy nhất, LiteLLM tự route đến provider nào đang available và có priority cao nhất.</p>
+                </div>
+                <div style="background:#fef3c7;border-radius:8px;padding:9px 12px;border-left:3px solid #f59e0b;margin-top:8px;">
+                    <p style="font-size:11.5px;color:#92400e;margin:0;"><i class="fa-solid fa-triangle-exclamation" style="margin-right:5px;"></i><strong>Dynatrace Davis AI</strong> và <strong>Datadog AI</strong> cũng dùng LLM nội bộ — nhưng bạn không chọn được model, không thay đổi được prompt, và không biết data của bạn được xử lý thế nào. Đây là trade-off của SaaS.</p>
+                </div>
+            </div>
+        </div>
+        <div class="bridge">
+            <i class="fa-solid fa-arrow-right" style="color:var(--primary);font-size:13px;"></i>
+            <p style="font-size:13px;color:var(--text-muted);margin:0;"><strong style="color:var(--primary);">Tiếp theo:</strong> LLM chỉ biết những gì được train. Nếu lỗi xảy ra lần trước trong team bạn — LLM không biết. RAG giải quyết vấn đề này.</p>
+        </div>
+    </div>
+</div>
+
+<!-- ═══ SLIDE 5 — RAG CONCEPT ═══ -->
+<div class="slide-container">
+    <div class="slide-header">
+        <span class="slide-number">05</span>
+        <h2 class="slide-title">RAG — <span>Bộ Nhớ Dài Hạn của AI</span></h2>
+        <span class="slide-tag">Nền tảng AI · RAG</span>
+    </div>
+    <div class="content-area">
+        <div class="def-bar">
+            <strong>RAG (Retrieval-Augmented Generation)</strong> = trước khi hỏi AI, tìm kiếm các tài liệu liên quan và <em>nhét vào context</em> của câu hỏi. AI không cần nhớ — chỉ cần đọc tài liệu được cung cấp và trả lời dựa trên đó. Giống như cho AI "tờ gian lận" trước khi vào thi.
+        </div>
+        <div class="two-col" style="gap:32px; align-items:start;">
+            <div>
+                <svg viewBox="0 0 440 380" xmlns="http://www.w3.org/2000/svg" style="width:100%;border-radius:14px;">
+                    <rect width="440" height="380" fill="#f8fafc" rx="14"/>
+                    <text x="220" y="22" text-anchor="middle" font-family="Plus Jakarta Sans,sans-serif" font-size="12" font-weight="700" fill="#0f172a">RAG Flow trong AI-Ops</text>
+                    <!-- Build failure -->
+                    <rect x="10" y="32" width="130" height="44" rx="8" fill="#fecaca" stroke="#ef4444" stroke-width="1.5"/>
+                    <text x="75" y="50" text-anchor="middle" font-family="Plus Jakarta Sans,sans-serif" font-size="10" font-weight="700" fill="#991b1b">Build #142 Fails</text>
+                    <text x="75" y="66" text-anchor="middle" font-family="Plus Jakarta Sans,sans-serif" font-size="9" fill="#991b1b">cleaned_log → 30 dòng</text>
+                    <line x1="140" y1="54" x2="160" y2="54" stroke="#ef4444" stroke-width="2" marker-end="url(#arr)"/>
+                    <!-- DB query -->
+                    <rect x="162" y="32" width="130" height="44" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+                    <text x="227" y="50" text-anchor="middle" font-family="Plus Jakarta Sans,sans-serif" font-size="10" font-weight="700" fill="#92400e">Search Past Failures</text>
+                    <text x="227" y="66" text-anchor="middle" font-family="Plus Jakarta Sans,sans-serif" font-size="9" fill="#92400e">keyword / vector similarity</text>
+                    <line x1="292" y1="54" x2="312" y2="54" stroke="#f59e0b" stroke-width="2"/>
+                    <!-- DB -->
+                    <rect x="314" y="32" width="116" height="44" rx="8" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5"/>
+                    <text x="372" y="50" text-anchor="middle" font-family="Plus Jakarta Sans,sans-serif" font-size="10" font-weight="700" fill="#1e40af">PostgreSQL</text>
+                    <text x="372" y="66" text-anchor="middle" font-family="Plus Jakarta Sans,sans-serif" font-size="9" fill="#1e40af">+ pgvector</text>
+                    <!-- Past analyses -->
+                    <rect x="10" y="100" width="420" height="80" rx="10" fill="#f0fdf4" stroke="#10b981" stroke-width="1.5"/>
+                    <text x="220" y="120" text-anchor="middle" font-family="Plus Jakarta Sans,sans-serif" font-size="10" font-weight="700" fill="#166534">RAG Context — 3 lỗi tương tự từ quá khứ</text>
+                    <rect x="20"  y="128" width="120" height="40" rx="6" fill="#d1fae5" stroke="#10b981" stroke-width="1"/>
+                    <text x="80"  y="143" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#065f46">Build #98: cannot find</text>
+                    <text x="80"  y="156" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#065f46">symbol → renamed method</text>
+                    <rect x="160" y="128" width="120" height="40" rx="6" fill="#d1fae5" stroke="#10b981" stroke-width="1"/>
+                    <text x="220" y="143" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#065f46">Build #115: compile err</text>
+                    <text x="220" y="156" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#065f46">→ missing import</text>
+                    <rect x="300" y="128" width="120" height="40" rx="6" fill="#d1fae5" stroke="#10b981" stroke-width="1"/>
+                    <text x="360" y="143" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#065f46">Build #130: same error</text>
+                    <text x="360" y="156" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#065f46">→ PR #44 fixed it</text>
+                    <!-- Prompt assembly -->
+                    <rect x="10" y="200" width="420" height="54" rx="10" fill="#fdf4ff" stroke="#a855f7" stroke-width="1.5"/>
+                    <text x="220" y="222" text-anchor="middle" font-family="Plus Jakarta Sans,sans-serif" font-size="10" font-weight="700" fill="#7e22ce">Prompt = System Prompt + RAG Context + Current Log</text>
+                    <text x="220" y="240" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#6b21a8">"Phân tích lỗi dưới đây. Lỗi tương tự trong quá khứ: [RAG]. Log hiện tại: [log]"</text>
+                    <!-- LLM response -->
+                    <rect x="10" y="274" width="420" height="90" rx="10" fill="#1e293b" stroke="#a855f7" stroke-width="1.5"/>
+                    <text x="20" y="294" font-family="JetBrains Mono,monospace" font-size="9" fill="#bc8cff">🚨 Problem: Compilation error — method calculateDiscount not found</text>
+                    <text x="20" y="310" font-family="JetBrains Mono,monospace" font-size="9" fill="#bc8cff">🔍 Root Cause: Method renamed to applyDiscount in commit #f3a9b2</text>
+                    <text x="20" y="326" font-family="JetBrains Mono,monospace" font-size="9" fill="#bc8cff">🛠️ Fix Steps: 1. Update call in OrderService.java line 47</text>
+                    <text x="20" y="342" font-family="JetBrains Mono,monospace" font-size="9" fill="#bc8cff">             2. Run `mvn compile` to verify. See PR #44 for similar fix.</text>
+                    <defs>
+                        <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                            <path d="M0,0 L0,6 L8,3 z" fill="#ef4444"/>
+                        </marker>
+                    </defs>
+                </svg>
+            </div>
+            <div>
+                <h3>Tại sao RAG quan trọng hơn Fine-tuning?</h3>
+                <div style="display:flex;flex-direction:column;gap:9px;margin-bottom:14px;">
+                    <div class="path-step compact">
+                        <div class="step-num sm">1</div>
+                        <div>
+                            <h4>Không cần retrain model</h4>
+                            <p style="font-size:12px;">Fine-tuning tốn GPU, thời gian, tiền bạc. RAG chỉ cần database và query — thêm dữ liệu mới ngay lập tức.</p>
+                        </div>
+                    </div>
+                    <div class="path-step green compact">
+                        <div class="step-num green sm">2</div>
+                        <div>
+                            <h4>Context đặc thù của team</h4>
+                            <p style="font-size:12px;">Lỗi <code>OrderService</code> xảy ra tháng trước, cách fix là gì — chỉ team bạn biết. RAG nhét kiến thức đó vào prompt.</p>
+                        </div>
+                    </div>
+                    <div class="path-step compact" style="border-left-color:#a855f7;">
+                        <div class="step-num sm" style="background:#a855f7;">3</div>
+                        <div>
+                            <h4>Hai mode tìm kiếm</h4>
+                            <p style="font-size:12px;"><strong>Keyword mode (default):</strong> extract error tokens → SQL LIKE query — nhanh, không cần GPU.<br><strong>Vector mode:</strong> pgvector cosine similarity — tìm lỗi "tương tự ngữ nghĩa" dù không trùng từ khóa.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="highlight-box green">
+                    <p><strong>Trong demo này:</strong> Mỗi lần AI phân tích xong, kết quả được lưu vào PostgreSQL. Lần sau cùng lỗi xảy ra, RAG tìm thấy giải pháp cũ và AI có context tốt hơn.</p>
+                </div>
+            </div>
+        </div>
+        <div class="bridge">
+            <i class="fa-solid fa-arrow-right" style="color:var(--primary);font-size:13px;"></i>
+            <p style="font-size:13px;color:var(--text-muted);margin:0;"><strong style="color:var(--primary);">Tiếp theo:</strong> LLM và RAG đã rõ — nhưng gọi thẳng OpenAI API có vấn đề gì? AI Gateway sinh ra để làm gì?</p>
+        </div>
+    </div>
+</div>
+
+
+<!-- ═══ SLIDE 6 — AI GATEWAY ═══ -->
+<div class="slide-container">
+    <div class="slide-header">
+        <span class="slide-number">06</span>
+        <h2 class="slide-title">AI Gateway — <span>Tại sao không gọi thẳng OpenAI?</span></h2>
+        <span class="slide-tag">Nền tảng AI · LiteLLM</span>
+    </div>
+    <div class="content-area">
+        <div class="def-bar">
+            <strong>AI Gateway (LiteLLM)</strong> là tầng proxy đứng giữa ứng dụng và các LLM provider. Backend chỉ cần gọi <em>một endpoint OpenAI-compatible duy nhất</em> — LiteLLM lo phần còn lại: chọn provider, fallback khi lỗi, timeout, retry, load balancing.
+        </div>
+        <div class="two-col" style="gap:32px; align-items:start; margin-bottom:16px;">
+            <div>
+                <h3 style="color:var(--danger);">Vấn đề khi gọi thẳng API</h3>
+                <ul class="bullet-list danger sm" style="margin-top:8px;">
+                    <li><strong>Vendor lock-in:</strong> code dùng <code>openai.ChatCompletion.create()</code> — muốn chuyển sang Gemini phải viết lại toàn bộ.</li>
+                    <li><strong>No fallback:</strong> OpenAI rate-limit → cả hệ thống down. Không có cơ chế tự động chuyển sang provider khác.</li>
+                    <li><strong>API key management:</strong> mỗi service giữ key riêng → khó rotate, khó audit, dễ leak.</li>
+                    <li><strong>No local option:</strong> trong môi trường air-gapped hoặc data sensitive, không thể dùng cloud API.</li>
+                </ul>
+                <h3 style="color:var(--secondary); margin-top:16px;">LiteLLM giải quyết</h3>
+                <ul class="bullet-list sm" style="margin-top:8px;">
+                    <li><strong>OpenAI-compatible API:</strong> backend gọi <code>/v1/chat/completions</code> — giống OpenAI SDK nhưng có thể route bất kỳ đâu.</li>
+                    <li><strong>Automatic Fallback:</strong> Azure fail → Gemini → Ollama. Priority order cấu hình bằng <code>model_list</code>.</li>
+                    <li><strong>Centralized key management:</strong> chỉ LiteLLM giữ provider API keys. Backend chỉ biết master key nội bộ.</li>
+                    <li><strong>Hybrid routing:</strong> local Ollama cho dev/staging, cloud cho production — cùng một code.</li>
+                </ul>
+            </div>
+            <div>
+                <div style="background:#f8fafc;border-radius:14px;padding:18px;border:1px solid var(--border-ui);margin-bottom:16px;">
+                    <p style="font-size:12px;font-weight:700;color:var(--text-dark);margin-bottom:12px;"><i class="fa-solid fa-diagram-project" style="color:var(--primary);margin-right:6px;"></i>Priority Chain trong demo này</p>
+                    <div style="display:flex;flex-direction:column;gap:8px;">
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <span style="background:#dbeafe;color:#1e40af;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;flex-shrink:0;min-width:28px;text-align:center;">1</span>
+                            <div style="flex:1;background:#eff6ff;border-radius:8px;padding:8px 12px;">
+                                <p style="font-size:12px;font-weight:700;color:#1e40af;margin:0;">Azure AI Foundry</p>
+                                <p style="font-size:11px;color:#3b82f6;margin:0;">Fastest · gpt-4o-mini · Entra Service Principal auth</p>
+                            </div>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <span style="background:#d1fae5;color:#065f46;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;flex-shrink:0;min-width:28px;text-align:center;">2</span>
+                            <div style="flex:1;background:#f0fdf4;border-radius:8px;padding:8px 12px;">
+                                <p style="font-size:12px;font-weight:700;color:#166534;margin:0;">Google Gemini</p>
+                                <p style="font-size:11px;color:#10b981;margin:0;">Fast · Free tier · API key only</p>
+                            </div>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <span style="background:#fef3c7;color:#92400e;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;flex-shrink:0;min-width:28px;text-align:center;">3</span>
+                            <div style="flex:1;background:#fffbeb;border-radius:8px;padding:8px 12px;">
+                                <p style="font-size:12px;font-weight:700;color:#92400e;margin:0;">Ollama (Local)</p>
+                                <p style="font-size:11px;color:#f59e0b;margin:0;">Free · Air-gapped · Slow on CPU · qwen2.5-coder:7b</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="code-block" style="font-size:11px;line-height:1.65;">
+                    <span class="cb-label">generate_config.py → litellm-config.yaml</span>
+<pre><span class="cmt"># LiteLLM model_list — priority order</span>
+<span class="kw">model_list:</span>
+  <span class="cmt"># Priority 1: Azure (fastest)</span>
+  <span class="kw">- model_name:</span> <span class="str">log-analyzer</span>
+    <span class="kw">litellm_params:</span>
+      <span class="kw">model:</span> <span class="str">azure/gpt-4o-mini</span>
+      <span class="kw">timeout:</span> <span class="num">60</span>
+  <span class="cmt"># Priority 2: Gemini (free tier)</span>
+  <span class="kw">- model_name:</span> <span class="str">log-analyzer</span>
+    <span class="kw">litellm_params:</span>
+      <span class="kw">model:</span> <span class="str">gemini/gemini-2.0-flash</span>
+  <span class="cmt"># Priority 3: Ollama (local fallback)</span>
+  <span class="kw">- model_name:</span> <span class="str">log-analyzer</span>
+    <span class="kw">litellm_params:</span>
+      <span class="kw">model:</span> <span class="str">ollama_chat/qwen2.5-coder:7b</span>
+      <span class="kw">timeout:</span> <span class="num">180</span></pre>
+                </div>
+            </div>
+        </div>
+        <div class="bridge">
+            <i class="fa-solid fa-arrow-right" style="color:var(--primary);font-size:13px;"></i>
+            <p style="font-size:13px;color:var(--text-muted);margin:0;"><strong style="color:var(--primary);">Tiếp theo:</strong> LLM + RAG + AI Gateway — đủ nền tảng. Giờ xem chúng lắp ghép thành kiến trúc hoàn chỉnh như thế nào.</p>
+        </div>
+    </div>
+</div>
+
+
+<!-- ═══ SLIDE 6b — REAL-WORLD COMPARISON ═══ -->
+<div class="slide-container">
+    <div class="slide-header">
+        <span class="slide-number">06b</span>
+        <h2 class="slide-title">So sánh: <span>Build-it-yourself vs SaaS AIOps</span></h2>
+        <span class="slide-tag">Thực chiến · Tool Comparison</span>
+    </div>
+    <div class="content-area">
+        <p style="font-size:13px;color:var(--text-muted);margin-bottom:14px;">Trước khi vào kiến trúc — hiểu tại sao chúng ta <strong>tự build</strong> thay vì dùng Dynatrace hay Datadog. Đây là bảng so sánh thực tế, không quảng cáo.</p>
+        <table class="compare-table" style="font-size:12px; margin-bottom:18px;">
+            <thead>
+                <tr><th>Tiêu chí</th><th>Dynatrace / Datadog</th><th>PagerDuty AIOps</th><th>Harness AIDA</th><th style="background:#065f46;">Workshop này (Self-built)</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Chi phí</strong></td>
+                    <td class="bad">$50–$500/host/month</td>
+                    <td class="bad">$19–$99/user/month</td>
+                    <td class="mid">Freemium, paid tiers</td>
+                    <td class="good">$0 (Ollama) hoặc pay-per-token</td>
+                </tr>
+                <tr>
+                    <td><strong>Data privacy</strong></td>
+                    <td class="bad">Log gửi lên SaaS cloud</td>
+                    <td class="bad">Data ở PagerDuty servers</td>
+                    <td class="mid">Harness cloud</td>
+                    <td class="good">100% self-hosted, air-gapped option</td>
+                </tr>
+                <tr>
+                    <td><strong>Jenkins integration</strong></td>
+                    <td class="mid">Agent-based, complex setup</td>
+                    <td class="mid">Webhook integration</td>
+                    <td class="good">Native CI/CD plugin</td>
+                    <td class="good">Vài dòng bash trong Jenkinsfile</td>
+                </tr>
+                <tr>
+                    <td><strong>Custom prompt / logic</strong></td>
+                    <td class="bad">Không thể tùy chỉnh AI</td>
+                    <td class="bad">Black-box ML model</td>
+                    <td class="mid">Limited customization</td>
+                    <td class="good">Full control — prompt, RAG, provider</td>
+                </tr>
+                <tr>
+                    <td><strong>LLM provider choice</strong></td>
+                    <td class="bad">Locked to vendor's AI</td>
+                    <td class="bad">Locked to vendor's AI</td>
+                    <td class="bad">Locked to Harness AI</td>
+                    <td class="good">Azure, Gemini, Ollama — hoán đổi tự do</td>
+                </tr>
+                <tr>
+                    <td><strong>Setup time</strong></td>
+                    <td class="bad">Weeks (agent rollout)</td>
+                    <td class="mid">Days (config)</td>
+                    <td class="good">Hours</td>
+                    <td class="good"><code>docker compose up</code> + 5 phút config</td>
+                </tr>
+                <tr>
+                    <td><strong>Phù hợp với</strong></td>
+                    <td>Enterprise, full observability</td>
+                    <td>On-call management</td>
+                    <td>Harness CI/CD users</td>
+                    <td class="good">Bất kỳ team nào có Jenkins</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="two-col" style="gap:16px;">
+            <div style="background:#f0fdf4;border-radius:12px;padding:14px 16px;border-left:4px solid #10b981;">
+                <p style="font-size:13px;font-weight:700;color:#166534;margin-bottom:6px;"><i class="fa-solid fa-check-double" style="margin-right:6px;"></i>Khi nào nên dùng SaaS AIOps?</p>
+                <ul class="bullet-list sm" style="margin:0;">
+                    <li>Team 50+ kỹ sư, cần full observability stack (metrics + logs + traces + incidents)</li>
+                    <li>Budget không phải vấn đề, không muốn maintain infra</li>
+                    <li>Cần enterprise features: RBAC, SSO, compliance certifications</li>
+                    <li>Ví dụ: <strong>Dynatrace</strong> tại BMW, <strong>Datadog</strong> tại Shopify, <strong>PagerDuty</strong> tại Netflix</li>
+                </ul>
+            </div>
+            <div style="background:#eff6ff;border-radius:12px;padding:14px 16px;border-left:4px solid #3b82f6;">
+                <p style="font-size:13px;font-weight:700;color:#1e40af;margin-bottom:6px;"><i class="fa-solid fa-wrench" style="margin-right:6px;"></i>Khi nào nên tự build (như workshop này)?</p>
+                <ul class="bullet-list sm" style="margin:0;">
+                    <li>Startup, SME — budget hạn chế, muốn bắt đầu nhanh</li>
+                    <li>Data sensitivity cao — log không được ra ngoài (banking, healthcare)</li>
+                    <li>Đã có Jenkins — chỉ cần thêm AI layer, không muốn đổi cả stack</li>
+                    <li>Muốn <strong>học và hiểu</strong> AI-Ops từ bên trong trước khi mua SaaS</li>
+                </ul>
+            </div>
+        </div>
+        <div class="bridge">
+            <i class="fa-solid fa-arrow-right" style="color:var(--primary);font-size:13px;"></i>
+            <p style="font-size:13px;color:var(--text-muted);margin:0;"><strong style="color:var(--primary);">Tiếp theo:</strong> Rõ ràng tại sao tự build rồi — giờ thiết kế kiến trúc 5 services hoàn chỉnh.</p>
+        </div>
+    </div>
+</div>
+
+<!-- ═══ SECTION C DIVIDER ═══ -->
+<div class="slide-container section-slide">
+    <div class="dot-grid" style="opacity:0.15;"></div>
+    <div class="title-layout">
+        <p class="section-label">Chặng 3 · Kiến trúc</p>
+        <h2>5 services,<br>1 luồng<br><span>hoàn chỉnh</span></h2>
+        <p>Từ Jenkins build fail → đến kết quả AI analysis in ra console — mọi bước đều có lý do.</p>
+    </div>
+</div>
+
+<!-- ═══ SLIDE 7 — ARCHITECTURE ═══ -->
+<div class="slide-container">
+    <div class="slide-header">
+        <span class="slide-number">07</span>
+        <h2 class="slide-title">Kiến trúc <span>End-to-End</span> — 5 Services</h2>
+        <span class="slide-tag">Kiến trúc · Docker Compose</span>
+    </div>
+    <div class="content-area">
+        <div class="two-col" style="gap:28px; align-items:start;">
+            <div>
+                <svg viewBox="0 0 440 480" xmlns="http://www.w3.org/2000/svg" style="width:100%;border-radius:14px;">
+                    <rect width="440" height="480" fill="#f8fafc" rx="14"/>
+                    <text x="220" y="22" text-anchor="middle" font-family="Plus Jakarta Sans,sans-serif" font-size="12" font-weight="700" fill="#0f172a">AI-Ops Stack — docker-compose.yml</text>
+                    <!-- Jenkins -->
+                    <rect x="10" y="34" width="200" height="50" rx="10" fill="#fecaca" stroke="#ef4444" stroke-width="2"/>
+                    <text x="110" y="55" text-anchor="middle" font-family="Plus Jakarta Sans,sans-serif" font-size="11" font-weight="700" fill="#991b1b">Jenkins Pipeline</text>
+                    <text x="110" y="72" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#991b1b">post{failure} → analyze.sh</text>
+                    <line x1="110" y1="84" x2="110" y2="104" stroke="#ef4444" stroke-width="2" stroke-dasharray="4,3"/>
+                    <!-- Backend -->
+                    <rect x="10" y="106" width="200" height="60" rx="10" fill="#dbeafe" stroke="#3b82f6" stroke-width="2"/>
+                    <text x="110" y="126" text-anchor="middle" font-family="Plus Jakarta Sans,sans-serif" font-size="11" font-weight="700" fill="#1e40af">Backend (FastAPI)</text>
+                    <text x="110" y="142" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#1e40af">POST /api/analyze-log</text>
+                    <text x="110" y="156" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#3b82f6">port: 8000</text>
+                    <!-- DB -->
+                    <rect x="230" y="106" width="200" height="60" rx="10" fill="#f0fdf4" stroke="#10b981" stroke-width="2"/>
+                    <text x="330" y="126" text-anchor="middle" font-family="Plus Jakarta Sans,sans-serif" font-size="11" font-weight="700" fill="#166534">PostgreSQL + pgvector</text>
+                    <text x="330" y="142" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#166534">RAG storage + vector search</text>
+                    <text x="330" y="156" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#10b981">pgvector/pgvector:pg16</text>
+                    <!-- Arrow Backend → DB -->
+                    <line x1="210" y1="136" x2="228" y2="136" stroke="#10b981" stroke-width="1.5" stroke-dasharray="3,2"/>
+                    <text x="219" y="130" text-anchor="middle" font-family="Plus Jakarta Sans,sans-serif" font-size="8" fill="#10b981">RAG</text>
+                    <!-- Arrow Backend → LiteLLM -->
+                    <line x1="110" y1="166" x2="110" y2="204" stroke="#3b82f6" stroke-width="2" stroke-dasharray="4,3"/>
+                    <!-- LiteLLM -->
+                    <rect x="10" y="206" width="420" height="60" rx="10" fill="#fdf4ff" stroke="#a855f7" stroke-width="2"/>
+                    <text x="220" y="227" text-anchor="middle" font-family="Plus Jakarta Sans,sans-serif" font-size="11" font-weight="700" fill="#7e22ce">LiteLLM Gateway</text>
+                    <text x="220" y="243" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#7e22ce">OpenAI-compatible proxy · model: log-analyzer · port: 4000</text>
+                    <text x="220" y="257" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#9333ea">ghcr.io/berriai/litellm:main-v1.80.8-stable</text>
+                    <!-- Three providers -->
+                    <line x1="100" y1="266" x2="75"  y2="296" stroke="#a855f7" stroke-width="1.5"/>
+                    <line x1="220" y1="266" x2="220" y2="296" stroke="#a855f7" stroke-width="1.5"/>
+                    <line x1="340" y1="266" x2="365" y2="296" stroke="#a855f7" stroke-width="1.5"/>
+                    <rect x="10"  y="298" width="128" height="50" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+                    <text x="74" y="317" text-anchor="middle" font-family="Plus Jakarta Sans,sans-serif" font-size="10" font-weight="700" fill="#92400e">Ollama (Local)</text>
+                    <text x="74" y="332" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#92400e">qwen2.5-coder:7b</text>
+                    <text x="74" y="343" text-anchor="middle" font-family="Plus Jakarta Sans,sans-serif" font-size="8" fill="#92400e">⚠ optional profile</text>
+                    <rect x="156" y="298" width="128" height="50" rx="8" fill="#d1fae5" stroke="#10b981" stroke-width="1.5"/>
+                    <text x="220" y="317" text-anchor="middle" font-family="Plus Jakarta Sans,sans-serif" font-size="10" font-weight="700" fill="#065f46">Google Gemini</text>
+                    <text x="220" y="332" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#065f46">gemini-2.0-flash</text>
+                    <text x="220" y="343" text-anchor="middle" font-family="Plus Jakarta Sans,sans-serif" font-size="8" fill="#065f46">✓ free tier</text>
+                    <rect x="302" y="298" width="128" height="50" rx="8" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5"/>
+                    <text x="366" y="317" text-anchor="middle" font-family="Plus Jakarta Sans,sans-serif" font-size="10" font-weight="700" fill="#1e40af">Azure Foundry</text>
+                    <text x="366" y="332" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#1e40af">gpt-4o-mini</text>
+                    <text x="366" y="343" text-anchor="middle" font-family="Plus Jakarta Sans,sans-serif" font-size="8" fill="#1e40af">✓ fastest</text>
+                    <!-- Response back -->
+                    <line x1="110" y1="206" x2="110" y2="188" stroke="#10b981" stroke-width="2" stroke-dasharray="4,3"/>
+                    <line x1="110" y1="166" x2="110" y2="148" stroke="#10b981" stroke-width="2" stroke-dasharray="4,3"/>
+                    <!-- Notifications -->
+                    <rect x="230" y="360" width="200" height="50" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+                    <text x="330" y="379" text-anchor="middle" font-family="Plus Jakarta Sans,sans-serif" font-size="10" font-weight="700" fill="#92400e">Slack / Teams</text>
+                    <text x="330" y="395" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#92400e">notify.py → webhook</text>
+                    <line x1="210" y1="155" x2="330" y2="360" stroke="#f59e0b" stroke-width="1" stroke-dasharray="3,2"/>
+                    <!-- Labels -->
+                    <text x="220" y="462" text-anchor="middle" font-family="Plus Jakarta Sans,sans-serif" font-size="9" fill="#475569">→ All services defined in docker-compose.yml · Backend depends_on: db, litellm</text>
+                </svg>
+            </div>
+            <div>
+                <p style="font-size:13px;color:var(--text-muted);margin-bottom:14px;">5 services, mỗi service có <strong>một trách nhiệm rõ ràng</strong>. Không service nào biết implementation details của service khác.</p>
+                <table class="compare-table" style="font-size:12px; margin-bottom:14px;">
+                    <thead><tr><th>Service</th><th>Image</th><th>Vai trò</th></tr></thead>
+                    <tbody>
+                        <tr><td><code>db</code></td><td>pgvector/pgvector:pg16</td><td>PostgreSQL + pgvector extension cho RAG storage &amp; vector search</td></tr>
+                        <tr><td><code>litellm</code></td><td>ghcr.io/berriai/litellm</td><td>AI Gateway — unified proxy đến mọi LLM provider</td></tr>
+                        <tr><td><code>backend</code></td><td>./backend (FastAPI)</td><td>Orchestrator — RAG + prompt + LLM + persist + notify</td></tr>
+                        <tr><td><code>ollama</code></td><td>ollama/ollama:0.9.6</td><td>Local LLM inference (optional, profile-gated)</td></tr>
+                        <tr><td><code>ollama-model</code></td><td>ollama/ollama:0.9.6</td><td>One-shot: pull model rồi exit</td></tr>
+                    </tbody>
+                </table>
+                <div class="highlight-box">
+                    <p><strong>Startup order:</strong> <code>db</code> phải healthy trước → <code>litellm</code> phải healthy trước → <code>backend</code> mới start. Docker Compose <code>depends_on</code> + <code>condition: service_healthy</code> đảm bảo điều này.</p>
+                </div>
+            </div>
+        </div>
+        <div class="bridge">
+            <i class="fa-solid fa-arrow-right" style="color:var(--primary);font-size:13px;"></i>
+            <p style="font-size:13px;color:var(--text-muted);margin:0;"><strong style="color:var(--primary);">Tiếp theo:</strong> Kiến trúc tổng thể đã rõ — đi sâu vào từng bước trong luồng xử lý với code thực tế.</p>
+        </div>
+    </div>
+</div>
+
+
+<!-- ═══ SECTION D DIVIDER ═══ -->
+<div class="slide-container section-slide">
+    <div class="dot-grid" style="opacity:0.15;"></div>
+    <div class="title-layout">
+        <p class="section-label">Chặng 4 · Code Thực Tế</p>
+        <h2>Từ Jenkins log<br>đến AI <span>Analysis</span></h2>
+        <p>Mỗi bước trong luồng — code thực, không pseudocode.</p>
+    </div>
+</div>
+
+<!-- ═══ SLIDE 8 — STEP 1: PREPROCESS ═══ -->
+<div class="slide-container">
+    <div class="slide-header">
+        <span class="slide-number">08</span>
+        <h2 class="slide-title">Bước 1 — <span>Jenkins Log Preprocessing</span></h2>
+        <span class="slide-tag">Code · Jenkins / Bash</span>
+    </div>
+    <div class="content-area">
+        <div class="def-bar">
+            Trước khi gửi log cho AI, phải <em>lọc bỏ 95% nhiễu</em>. 3.000 dòng log → 30 dòng lỗi thực sự → tiết kiệm token, tăng chất lượng phân tích. Đây là bước quan trọng nhất nhưng thường bị bỏ qua.
+        </div>
+        <div class="two-col" style="gap:28px; align-items:start;">
+            <div>
+                <h3>Jenkinsfile — post failure block</h3>
+                <div class="code-block" style="font-size:10.5px;line-height:1.65;margin-bottom:14px;">
+                    <span class="cb-label">jenkins/Jenkinsfile</span>
+<pre><span class="kw">post</span> {
+  <span class="kw">failure</span> {
+    <span class="fn">script</span> {
+      <span class="kw">try</span> {
+        <span class="fn">ansiColor</span>(<span class="str">'xterm'</span>) {
+          <span class="fn">sh</span> <span class="str">'''#!/usr/bin/env bash
+          set -euo pipefail
+          readonly SCRIPTS_DIR="${LOCAL_WORKSPACE}/jenkins/scripts"
+          <span class="cmt"># 1. Preprocess log → cleaned_log</span>
+          <span class="cmt"># 2. POST to backend → AI analysis</span>
+          <span class="cmt"># 3. Print formatted result</span>
+          source "${SCRIPTS_DIR}/analyze.sh"
+          python3 "${SCRIPTS_DIR}/notify.py"
+          '''</span>
+        }
+      } <span class="kw">catch</span> (<span class="fn">Exception</span> error) {
+        <span class="cmt">// Never let AI ops block the build result</span>
+        <span class="fn">echo</span> <span class="str">"AI Ops skipped: ${error.getMessage()}"</span>
+      }
+    }
+  }
+}</pre>
+                </div>
+                <div class="highlight-box green">
+                    <p><strong>Design decision:</strong> AI analysis nằm trong <code>try/catch</code> — nếu backend down hoặc LLM timeout, build result không bị ảnh hưởng. AI là <em>enhancement</em>, không phải điều kiện.</p>
+                </div>
+            </div>
+            <div>
+                <h3>preprocess_log.sh + preprocess.py</h3>
+                <div class="code-block" style="font-size:10.5px;line-height:1.65;">
+                    <span class="cb-label">preprocess_log.sh — log source resolution</span>
+<pre><span class="cmt"># Ưu tiên đọc log theo thứ tự:</span>
+<span class="cmt"># 1. JENKINS_LOG_FILE (disk — fastest, no auth)</span>
+<span class="cmt"># 2. LOG_FILE argument</span>
+<span class="cmt"># 3. BUILD_URL REST API + basic auth</span>
+<span class="cmt"># 4. Fallback placeholder</span>
+
+<span class="fn">read_log_tail</span>() {
+  <span class="kw">if</span> [[ -n <span class="str">"${JENKINS_LOG_FILE:-}"</span> ]]; then
+    <span class="fn">tail</span> -n 100 <span class="str">"${JENKINS_LOG_FILE}"</span>
+    <span class="kw">return</span>
+  fi
+  <span class="cmt"># ... fallback to REST API ...</span>
+}
+<span class="cmt"># Pipe qua preprocess.py</span>
+<span class="fn">read_log_tail</span> | <span class="fn">python3</span> <span class="str">"${PREPROCESS_PY}"</span></pre>
+                </div>
+                <div style="margin-top:10px;">
+                    <div style="background:#f0fdf4;border-radius:10px;padding:12px;border-left:3px solid #10b981;margin-bottom:8px;">
+                        <p style="font-size:12px;font-weight:700;color:#166534;margin-bottom:4px;">preprocess.py — filter logic</p>
+                        <p style="font-size:12px;color:#065f46;margin:0;">Lấy 100 dòng cuối → filter các dòng chứa <code>ERROR</code>, <code>FATAL</code>, <code>Exception</code>, <code>Failed</code> → output ra stdout. Kết quả là <code>cleaned_log</code> chỉ còn ~20–50 dòng signal thực sự.</p>
+                    </div>
+                    <div class="fun-note" style="margin:0;"><i class="fa-solid fa-calculator"></i> 3.000 dòng × 4 token/dòng = 12.000 tokens. Sau filter: 30 dòng × 15 token = 450 tokens. Tiết kiệm 96% chi phí token.</div>
+                <div style="background:#f0fdf4;border-radius:8px;padding:9px 12px;border-left:3px solid #10b981;margin-top:8px;">
+                    <p style="font-size:11.5px;color:#065f46;margin:0;"><i class="fa-solid fa-lightbulb" style="margin-right:5px;"></i><strong>GitHub Copilot for CLI</strong> làm điều tương tự khi bạn chạy <code>gh copilot explain "$(cat error.log)"</code> — nhưng chỉ hoạt động locally, không tích hợp được vào automated pipeline như cách này.</p>
+                </div>
+                </div>
+            </div>
+        </div>
+        <div class="bridge">
+            <i class="fa-solid fa-arrow-right" style="color:var(--primary);font-size:13px;"></i>
+            <p style="font-size:13px;color:var(--text-muted);margin:0;"><strong style="color:var(--primary);">Tiếp theo:</strong> <code>cleaned_log</code> đã sẵn sàng → <code>analyze.sh</code> gọi <code>POST /api/analyze-log</code> → FastAPI backend nhận và bắt đầu orchestration.</p>
+        </div>
+    </div>
+</div>
+
+<!-- ═══ SLIDE 9 — STEP 2: BACKEND ═══ -->
+<div class="slide-container">
+    <div class="slide-header">
+        <span class="slide-number">09</span>
+        <h2 class="slide-title">Bước 2 — <span>FastAPI Backend Orchestration</span></h2>
+        <span class="slide-tag">Code · Python / FastAPI</span>
+    </div>
+    <div class="content-area">
+        <div class="two-col" style="gap:28px; align-items:start;">
+            <div>
+                <h3>analyze.py — HTTP boundary (chỉ làm HTTP)</h3>
+                <div class="code-block" style="font-size:10.5px;line-height:1.65;margin-bottom:12px;">
+                    <span class="cb-label">backend/app/api/analyze.py</span>
+<pre><span class="fn">@router.post</span>(<span class="str">"/analyze-log"</span>,
+             response_class=<span class="fn">PlainTextResponse</span>)
+<span class="kw">def</span> <span class="fn">analyze_log</span>(
+    request: <span class="fn">AnalyzeLogRequest</span>,
+    service: <span class="fn">Annotated</span>[<span class="fn">AnalysisService</span>, <span class="fn">Depends</span>(...)],
+) -> <span class="fn">PlainTextResponse</span>:
+    request_id = str(<span class="fn">uuid.uuid4</span>())
+
+    <span class="cmt"># Route layer chỉ: validate → log → delegate</span>
+    result = service.<span class="fn">analyze</span>(
+        build_number=request.build_number,
+        cleaned_log=request.cleaned_log,
+        request_id=request_id,
+        job_name=request.job_name,
+        build_url=request.build_url,
+    )
+    <span class="kw">return</span> <span class="fn">PlainTextResponse</span>(
+        content=result.text,
+        headers={
+            <span class="str">"X-AI-Provider"</span>: result.provider,
+            <span class="str">"X-AI-Model"</span>:    result.model,
+        },
+    )</pre>
+                </div>
+                <div class="highlight-box">
+                    <p><strong>Layered Architecture:</strong> Route layer không có business logic. Tất cả logic nằm trong <code>AnalysisService</code> — testable độc lập, không cần HTTP context.</p>
+                </div>
+            </div>
+            <div>
+                <h3>analysis_service.py — orchestrator</h3>
+                <div class="code-block" style="font-size:10.5px;line-height:1.65;">
+                    <span class="cb-label">backend/app/core/analysis_service.py</span>
+<pre><span class="kw">def</span> <span class="fn">analyze</span>(self, build_number, cleaned_log,
+             request_id, job_name, build_url):
+
+  <span class="cmt"># Step 1: RAG — tìm lỗi tương tự từ quá khứ</span>
+  rag_context = self.<span class="fn">_retrieve_context</span>(
+      build_number, cleaned_log, request_id
+  )
+  <span class="cmt"># Step 2: Build prompt với RAG context</span>
+  messages = prompt_builder.<span class="fn">build</span>(
+      cleaned_log, build_number, rag_context
+  )
+  <span class="cmt"># Step 3: Gọi LLM qua gateway</span>
+  result = self.<span class="fn">_complete</span>(messages, ...)
+
+  <span class="cmt"># Step 4: Lưu vào DB (best-effort — không block)</span>
+  self.<span class="fn">_save_best_effort</span>(build_number, cleaned_log, ...)
+
+  <span class="cmt"># Step 5: Gửi Slack/Teams notification</span>
+  self.<span class="fn">_notify_best_effort</span>(build_number, ...)
+
+  <span class="kw">return</span> <span class="fn">AnalysisResult</span>(text=result.text, ...)</pre>
+                </div>
+                <div style="margin-top:10px;">
+                    <div style="background:#fff1f2;border-radius:8px;padding:10px 12px;border-left:3px solid #ef4444;">
+                        <p style="font-size:12px;font-weight:700;color:#991b1b;margin-bottom:3px;">Graceful Degradation Pattern</p>
+                        <p style="font-size:11.5px;color:#7f1d1d;margin:0;"><code>_save_best_effort</code> và <code>_notify_best_effort</code>: fail không ném exception ra ngoài — log ERROR và tiếp tục. Caller luôn nhận được kết quả dù DB hoặc Slack bị down.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="bridge">
+            <i class="fa-solid fa-arrow-right" style="color:var(--primary);font-size:13px;"></i>
+            <p style="font-size:13px;color:var(--text-muted);margin:0;"><strong style="color:var(--primary);">Tiếp theo:</strong> Prompt được xây dựng như thế nào? Đây là nơi "kỹ thuật" gặp "nghệ thuật" — Prompt Engineering.</p>
+        </div>
+    </div>
+</div>
+
+
+<!-- ═══ SLIDE 10 — STEP 3: PROMPT ENGINEERING ═══ -->
+<div class="slide-container">
+    <div class="slide-header">
+        <span class="slide-number">10</span>
+        <h2 class="slide-title">Bước 3 — <span>Prompt Engineering &amp; RAG Assembly</span></h2>
+        <span class="slide-tag">Code · Prompt Engineering</span>
+    </div>
+    <div class="content-area">
+        <div class="def-bar">
+            Prompt là <strong>giao diện giữa bạn và LLM</strong>. Prompt tệ → output rác. Prompt tốt → output có thể parse và dùng ngay. Hệ thống này dùng <em>structured output</em> với 3 section cố định để downstream (Jenkins console, Slack) parse dễ dàng.
+        </div>
+        <div class="two-col" style="gap:28px; align-items:start;">
+            <div>
+                <h3>prompts.py — System Prompt</h3>
+                <div class="code-block" style="font-size:10.5px;line-height:1.65;margin-bottom:12px;">
+                    <span class="cb-label">backend/app/core/prompts.py</span>
+<pre><span class="cmt"># Section labels — parsed by notify.py</span>
+<span class="kw">SECTION_PROBLEM</span>    = <span class="str">"🚨 Problem"</span>
+<span class="kw">SECTION_ROOT_CAUSE</span> = <span class="str">"🔍 Root Cause"</span>
+<span class="kw">SECTION_FIX_STEPS</span>  = <span class="str">"🛠️ Fix Steps"</span>
+
+<span class="kw">SYSTEM_PROMPT</span> = (
+  <span class="str">"You are a CI/CD failure analysis expert..."</span>
+  <span class="str">"Always respond in English using plain text only"</span>
+  <span class="str">"— no # headings, no ** bold markers."</span>
+  <span class="str">"Use exactly these three section labels:"</span>
+  <span class="str">"\n\n🚨 Problem\n"</span>
+  <span class="str">"A concise 1-3 sentence summary.\n\n"</span>
+  <span class="str">"🔍 Root Cause\n"</span>
+  <span class="str">"The underlying cause...\n\n"</span>
+  <span class="str">"🛠️ Fix Steps\n"</span>
+  <span class="str">"Specific, actionable steps..."</span>
+)</pre>
+                </div>
+                <div style="background:#1e293b;border-radius:10px;padding:14px;border-left:3px solid #a855f7;">
+                    <p style="font-size:12px;font-weight:700;color:#c084fc;margin-bottom:8px;">Tại sao Plain Text, không phải Markdown?</p>
+                    <p style="font-size:11.5px;color:#94a3b8;margin:0;"><code>## Heading</code> và <code>**bold**</code> render đẹp trong web nhưng hiển thị ký tự thô trong Slack (<code>*bold*</code> là Slack format) và Teams. Plain text + emoji labels → universal format cho mọi channel.</p>
+                </div>
+            </div>
+            <div>
+                <h3>prompt_builder.py — Assembler</h3>
+                <div class="code-block" style="font-size:10.5px;line-height:1.65;margin-bottom:12px;">
+                    <span class="cb-label">backend/app/core/prompt_builder.py</span>
+<pre><span class="kw">def</span> <span class="fn">build</span>(cleaned_log, build_number, rag_context):
+  user_parts = [
+      <span class="str">f"Build: {build_number}"</span>,
+      <span class="str">f"Log:\n{cleaned_log}"</span>,
+  ]
+  <span class="kw">if</span> rag_context:
+      user_parts.<span class="fn">insert</span>(0,
+          <span class="str">"Similar past failures for context:\n"</span>
+          + rag_context
+      )
+  <span class="kw">return</span> [
+      {<span class="str">"role"</span>: <span class="str">"system"</span>,
+       <span class="str">"content"</span>: <span class="fn">SYSTEM_PROMPT</span>},
+      {<span class="str">"role"</span>: <span class="str">"user"</span>,
+       <span class="str">"content"</span>: <span class="str">"\n\n"</span>.<span class="fn">join</span>(user_parts)},
+  ]</pre>
+                </div>
+                <div style="background:#f0fdf4;border-radius:10px;padding:12px;border-left:3px solid #10b981;">
+                    <p style="font-size:12px;font-weight:700;color:#166634;margin-bottom:6px;">Assembled Prompt Structure</p>
+                    <div style="display:flex;flex-direction:column;gap:4px;">
+                        <div style="background:#d1fae5;border-radius:6px;padding:6px 10px;">
+                            <p style="font-size:11px;color:#065f46;margin:0;"><strong>System:</strong> SYSTEM_PROMPT (role + output format instructions)</p>
+                        </div>
+                        <div style="background:#d1fae5;border-radius:6px;padding:6px 10px;">
+                            <p style="font-size:11px;color:#065f46;margin:0;"><strong>User [optional]:</strong> RAG Context từ DB (past similar failures)</p>
+                        </div>
+                        <div style="background:#d1fae5;border-radius:6px;padding:6px 10px;">
+                            <p style="font-size:11px;color:#065f46;margin:0;"><strong>User:</strong> Build number + cleaned_log (current failure)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="bridge">
+            <i class="fa-solid fa-arrow-right" style="color:var(--primary);font-size:13px;"></i>
+            <p style="font-size:13px;color:var(--text-muted);margin:0;"><strong style="color:var(--primary);">Tiếp theo:</strong> Prompt gửi đến LiteLLM → LiteLLM route đến provider → kết quả trả về Jenkins console và Slack.</p>
+        </div>
+    </div>
+</div>
+
+<!-- ═══ SLIDE 11 — STEP 4: LITELLM + RESPONSE ═══ -->
+<div class="slide-container">
+    <div class="slide-header">
+        <span class="slide-number">11</span>
+        <h2 class="slide-title">Bước 4 — <span>LiteLLM Routing &amp; Response Flow</span></h2>
+        <span class="slide-tag">Code · LiteLLM / Python</span>
+    </div>
+    <div class="content-area">
+        <div class="two-col" style="gap:28px; align-items:start; margin-bottom:16px;">
+            <div>
+                <h3>litellm_client.py — OpenAI-compatible call</h3>
+                <div class="code-block" style="font-size:10.5px;line-height:1.65;margin-bottom:12px;">
+                    <span class="cb-label">backend/app/llm/litellm_client.py</span>
+<pre><span class="kw">class</span> <span class="fn">LiteLLMClient</span>:
+  <span class="kw">def</span> <span class="fn">complete</span>(self, messages) -> <span class="fn">LLMResult</span>:
+    response = self._http.<span class="fn">post</span>(
+        <span class="str">f"{self._gateway_url}/chat/completions"</span>,
+        json={
+            <span class="str">"model"</span>:    <span class="str">"log-analyzer"</span>,
+            <span class="str">"messages"</span>: messages,
+        },
+        headers={
+            <span class="str">"Authorization"</span>:
+                <span class="str">f"Bearer {self._api_key}"</span>
+        },
+        timeout=self._timeout,
+    )
+    choice = response.json()[<span class="str">"choices"</span>][0]
+    <span class="kw">return</span> <span class="fn">LLMResult</span>(
+        text     = choice[<span class="str">"message"</span>][<span class="str">"content"</span>],
+        provider = response.headers.<span class="fn">get</span>(
+                       <span class="str">"x-litellm-model-id"</span>, <span class="str">"unknown"</span>),
+        model    = choice.<span class="fn">get</span>(<span class="str">"model"</span>, <span class="str">"unknown"</span>),
+    )</pre>
+                </div>
+                <div class="fun-note" style="margin:0;"><i class="fa-solid fa-plug-circle-check"></i> Backend không biết mình đang dùng Azure, Gemini hay Ollama — chỉ biết địa chỉ LiteLLM gateway. Swap provider không cần đổi 1 dòng backend code.</div>
+            </div>
+            <div>
+                <h3>analyze.sh — đọc response headers</h3>
+                <div class="code-block" style="font-size:10.5px;line-height:1.65;margin-bottom:12px;">
+                    <span class="cb-label">jenkins/scripts/analyze.sh — _call_backend()</span>
+<pre><span class="fn">_call_backend</span>() {
+  http_status=<span class="str">"$(curl --silent \
+    --request POST \
+    --header "Content-Type: application/json" \
+    --data "${request_body}" \
+    --output "${response_file}" \
+    --dump-header "${response_headers}" \
+    --write-out "%{http_code}" \
+    --max-time ${CURL_TIMEOUT_SECONDS} \
+    "${backend_url}/api/analyze-log")"</span>
+
+  <span class="kw">if</span> [[ <span class="str">"${http_status}"</span> == <span class="str">"200"</span> ]]; then
+    <span class="fn">AI_STATUS</span>=<span class="str">"ok"</span>
+    <span class="fn">AI_ANALYSIS</span>=<span class="str">"$(cat "${response_file}")"</span>
+    <span class="cmt"># Read provider from custom response headers</span>
+    <span class="fn">AI_PROVIDER</span>=<span class="str">"$(grep -i 'X-AI-Provider:' \
+        "${response_headers}" | cut -d: -f2-)"</span>
+    <span class="fn">AI_MODEL</span>=<span class="str">"$(grep -i 'X-AI-Model:' \
+        "${response_headers}" | cut -d: -f2-)"</span>
+  fi
+}</pre>
+                </div>
+                <div style="background:#f8fafc;border-radius:10px;padding:12px 14px;border:1px solid var(--border-ui);">
+                    <p style="font-size:12px;font-weight:700;color:var(--text-dark);margin-bottom:8px;"><i class="fa-solid fa-timeout" style="color:var(--primary);margin-right:6px;"></i>Timeout Chain</p>
+                    <div style="display:flex;flex-direction:column;gap:4px;">
+                        <p style="font-size:12px;color:var(--text-muted);margin:0;">curl (Jenkins):  <strong>300s</strong></p>
+                        <p style="font-size:12px;color:var(--text-muted);margin:0;padding-left:16px;">└ Backend:       <strong>200s</strong> (LLM_TIMEOUT_SECONDS)</p>
+                        <p style="font-size:12px;color:var(--text-muted);margin:0;padding-left:32px;">└ LiteLLM:       <strong>180s</strong> (request_timeout)</p>
+                        <p style="font-size:12px;color:var(--text-muted);margin:0;padding-left:48px;">└ Ollama:        <strong>60-120s</strong> (CPU inference)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="bridge">
+            <i class="fa-solid fa-arrow-right" style="color:var(--primary);font-size:13px;"></i>
+            <p style="font-size:13px;color:var(--text-muted);margin:0;"><strong style="color:var(--primary);">Tiếp theo:</strong> Kết quả trả về — xem thực tế output trông như thế nào trên Jenkins Console và Slack, rồi xem live demo.</p>
+        </div>
+    </div>
+</div>
+
+
+<!-- ═══ SECTION E DIVIDER ═══ -->
+<div class="slide-container section-slide">
+    <div class="dot-grid" style="opacity:0.15;"></div>
+    <div class="title-layout">
+        <p class="section-label">Chặng 5 · Demo Live</p>
+        <h2>Xem AI phân tích<br>lỗi <span>thật</span></h2>
+        <p>Spring Boot order-service với 3 lỗi test thật — Jenkins trigger → AI phân tích ngay trên console.</p>
+    </div>
+</div>
+
+<!-- ═══ SLIDE 12 — DEMO APP ═══ -->
+<div class="slide-container">
+    <div class="slide-header">
+        <span class="slide-number">12</span>
+        <h2 class="slide-title">Demo App — <span>Spring Boot Order Service với Lỗi Thật</span></h2>
+        <span class="slide-tag">Demo · Java / Spring Boot</span>
+    </div>
+    <div class="content-area">
+        <div class="def-bar">
+            <code>demo-app/</code> là một Spring Boot order service <strong>được thiết kế để fail</strong> — có 3 test cases kiểm tra intentionally broken business logic. Đây là "bệnh nhân" mà AI sẽ chẩn đoán.
+        </div>
+        <div class="two-col" style="gap:28px; align-items:start;">
+            <div>
+                <h3>Lỗi nào được cài sẵn?</h3>
+                <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;">
+                    <div style="background:#fff1f2;border-radius:10px;padding:12px 14px;border-left:3px solid #ef4444;">
+                        <p style="font-size:12.5px;font-weight:700;color:#991b1b;margin-bottom:4px;">Test 1: calculateTotal</p>
+                        <p style="font-size:12px;color:#7f1d1d;margin:0;">AssertionError: <code>assert 110.0 == 100.0</code> — tax calculation sai. OrderService tính tax 10% trên giá đã có tax thay vì giá gốc.</p>
+                    </div>
+                    <div style="background:#fff1f2;border-radius:10px;padding:12px 14px;border-left:3px solid #ef4444;">
+                        <p style="font-size:12.5px;font-weight:700;color:#991b1b;margin-bottom:4px;">Test 2: createOrder status</p>
+                        <p style="font-size:12px;color:#7f1d1d;margin:0;"><code>PROCESSING</code> expected nhưng nhận <code>PENDING</code> — trạng thái ban đầu của order không khớp với business logic yêu cầu.</p>
+                    </div>
+                    <div style="background:#fff1f2;border-radius:10px;padding:12px 14px;border-left:3px solid #ef4444;">
+                        <p style="font-size:12.5px;font-weight:700;color:#991b1b;margin-bottom:4px;">Test 3: getOrder not found</p>
+                        <p style="font-size:12px;color:#7f1d1d;margin:0;"><code>OrderNotFoundException</code> không được throw khi order ID không tồn tại — thiếu null check trong <code>OrderService</code>.</p>
+                    </div>
+                </div>
+                <div class="code-block" style="font-size:10.5px;line-height:1.65;">
+                    <span class="cb-label">Jenkinsfile params — chọn demo</span>
+<pre><span class="fn">choice</span>(
+  <span class="kw">name:</span> <span class="str">'DEMO_PROJECT'</span>,
+  <span class="kw">choices:</span> [
+    <span class="str">'none'</span>,
+    <span class="str">'java-order-service'</span>,        <span class="cmt">// compile + test</span>
+    <span class="str">'java-order-service-test-only'</span> <span class="cmt">// test only</span>
+  ],
+)
+<span class="cmt">// Build stage:</span>
+<span class="fn">sh</span> <span class="str">'''docker build --target test \
+    --tag order-service:test \
+    "${LOCAL_WORKSPACE}/demo-app"'''</span></pre>
+                </div>
+            </div>
+            <div>
+                <h3>Expected AI output</h3>
+                <div class="terminal-output" style="min-height:260px;">
+                    <span class="terminal-title">JENKINS CONSOLE — AI ANALYSIS</span>
+                    <br><br>
+                    <span class="t-prompt">AI analysis backend: http://localhost:8000</span><br>
+                    <span class="t-info">AI analysis received from google_gemini (gemini-2.0-flash)</span><br>
+                    <br>
+                    <span class="t-ai">🚨 Problem</span><br>
+                    <span class="t-ok">The Maven build for `order-service` failed with 3 test</span><br>
+                    <span class="t-ok">failures in `OrderServiceTest`. All failures are in</span><br>
+                    <span class="t-ok">business logic: tax calculation, order status, and</span><br>
+                    <span class="t-ok">not-found exception handling.</span><br>
+                    <br>
+                    <span class="t-ai">🔍 Root Cause</span><br>
+                    <span class="t-ok">1. `calculateTotal` applies tax to already-taxed value.</span><br>
+                    <span class="t-ok">2. `createOrder` sets initial status `PENDING` instead of</span><br>
+                    <span class="t-ok">   `PROCESSING` as business rules require.</span><br>
+                    <span class="t-ok">3. `getOrder` missing null check before returning result.</span><br>
+                    <br>
+                    <span class="t-ai">🛠️ Fix Steps</span><br>
+                    <span class="t-ok">1. In `OrderService.java` fix tax: `total = base * (1 + tax)`</span><br>
+                    <span class="t-ok">2. Change initial status in `createOrder` to `PROCESSING`.</span><br>
+                    <span class="t-ok">3. Add `orElseThrow(OrderNotFoundException::new)` in</span><br>
+                    <span class="t-ok">   `getOrder` method.</span>
+                </div>
+            </div>
+        </div>
+        <div class="bridge">
+            <i class="fa-solid fa-arrow-right" style="color:var(--primary);font-size:13px;"></i>
+            <p style="font-size:13px;color:var(--text-muted);margin:0;"><strong style="color:var(--primary);">Tiếp theo:</strong> Hướng dẫn chạy demo từng bước — từ <code>docker compose up</code> đến xem kết quả Jenkins.</p>
+        </div>
+    </div>
+</div>
+
+<!-- ═══ SLIDE 13 — DEMO WALKTHROUGH ═══ -->
+<div class="slide-container">
+    <div class="slide-header">
+        <span class="slide-number">13</span>
+        <h2 class="slide-title">Demo Walkthrough — <span>Chạy Từng Bước</span></h2>
+        <span class="slide-tag">Demo · Hands-on</span>
+    </div>
+    <div class="content-area">
+        <div class="two-col" style="gap:28px; align-items:start;">
+            <div>
+                <h3>Setup (5 phút)</h3>
+                <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;">
+                    <div class="path-step compact">
+                        <div class="step-num sm">1</div>
+                        <div>
+                            <h4>Cấu hình .env</h4>
+                            <div class="code-block" style="font-size:10px;line-height:1.6;margin-top:6px;">
+<pre><span class="fn">cp</span> .env.example .env
+<span class="cmt"># Chọn provider (Gemini - free tier):</span>
+<span class="kw">OLLAMA_PROVIDER_ENABLE</span>=<span class="num">false</span>
+<span class="kw">GOOGLE_GEMINI_PROVIDER_ENABLE</span>=<span class="num">true</span>
+<span class="kw">GOOGLE_GEMINI_API_KEY</span>=<span class="str">AIza...</span>
+<span class="kw">LITELLM_API_KEY</span>=<span class="str">sk-demo-key-123</span></pre>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="path-step green compact">
+                        <div class="step-num green sm">2</div>
+                        <div>
+                            <h4>Start stack</h4>
+                            <div class="code-block" style="font-size:10px;line-height:1.6;margin-top:6px;">
+<pre><span class="fn">docker</span> compose up -d --build
+<span class="cmt"># Wait for healthy:</span>
+<span class="fn">docker</span> compose ps
+<span class="cmt"># Run migrations:</span>
+<span class="fn">docker</span> compose run --rm backend \
+  alembic upgrade head</pre>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="path-step compact" style="border-left-color:#a855f7;">
+                        <div class="step-num sm" style="background:#a855f7;">3</div>
+                        <div>
+                            <h4>Verify</h4>
+                            <div class="code-block" style="font-size:10px;line-height:1.6;margin-top:6px;">
+<pre><span class="fn">curl</span> http://localhost:8000/health
+<span class="cmt"># → {"status":"ok"}</span>
+<span class="cmt"># Swagger UI: http://localhost:8000/docs</span></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <h3>Trigger Demo (2 phút)</h3>
+                <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;">
+                    <div class="path-step compact" style="border-left-color:#ef4444;">
+                        <div class="step-num sm red">A</div>
+                        <div>
+                            <h4>Option A: Quick test — curl thẳng</h4>
+                            <div class="code-block" style="font-size:10px;line-height:1.6;margin-top:6px;">
+<pre><span class="fn">curl</span> -sS -X POST \
+  http://localhost:8000/api/analyze-log \
+  -H <span class="str">"Content-Type: application/json"</span> \
+  -d <span class="str">'{
+    "build_number": "demo-1",
+    "cleaned_log": "FAILED OrderServiceTest\nassert 110.0 == 100.0\n3 failed"
+  }'</span></pre>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="path-step green compact">
+                        <div class="step-num green sm">B</div>
+                        <div>
+                            <h4>Option B: Jenkins pipeline</h4>
+                            <p style="font-size:12px;">Chạy Jenkins pipeline với param:<br><code>DEMO_PROJECT=java-order-service</code></p>
+                            <p style="font-size:12px;margin-top:4px;">Docker build Spring Boot → test fail → <code>post{failure}</code> trigger → AI analyze → kết quả in trên Jenkins console với ANSI colors.</p>
+                        </div>
+                    </div>
+                </div>
+                <div style="background:#0d1117;border-radius:10px;padding:12px 14px;border:1px solid #30363d;">
+                    <p style="font-size:11px;font-weight:700;color:#58a6ff;margin-bottom:6px;"><i class="fa-solid fa-flask" style="margin-right:5px;"></i>Swagger UI — có 3 example payloads sẵn</p>
+                    <p style="font-size:11px;color:#8b949e;margin:0;">Vào <code>http://localhost:8000/docs</code> → POST /api/analyze-log → Try it out → chọn example từ dropdown → Execute. Không cần Jenkins setup.</p>
+                </div>
+            </div>
+        </div>
+        <div class="bridge">
+            <i class="fa-solid fa-arrow-right" style="color:var(--primary);font-size:13px;"></i>
+            <p style="font-size:13px;color:var(--text-muted);margin:0;"><strong style="color:var(--primary);">Tiếp theo:</strong> Hệ thống đang hoạt động tốt — nó còn thiếu gì? Roadmap nâng cấp từ Passive AI lên Agentic AI.</p>
+        </div>
+    </div>
+</div>
+
+
+<!-- ═══ SECTION F DIVIDER ═══ -->
+<div class="slide-container section-slide">
+    <div class="dot-grid" style="opacity:0.15;"></div>
+    <div class="title-layout">
+        <p class="section-label">Chặng 6 · Roadmap</p>
+        <h2>Từ Advisor<br>đến <span>Agent</span></h2>
+        <p>Hệ thống hiện tại phân tích và gợi ý. Phiên bản tiếp theo: AI tự sửa code và mở PR.</p>
+    </div>
+</div>
+
+<!-- ═══ SLIDE 14 — LIMITATIONS & ROADMAP ═══ -->
+<div class="slide-container">
+    <div class="slide-header">
+        <span class="slide-number">14</span>
+        <h2 class="slide-title">Hạn Chế &amp; <span>Roadmap Nâng Cấp</span></h2>
+        <span class="slide-tag">Roadmap · Agentic AI</span>
+    </div>
+    <div class="content-area">
+        <div class="two-col" style="gap:32px; align-items:start; margin-bottom:20px;">
+            <div>
+                <h3 style="color:var(--warn);">Hạn chế hiện tại</h3>
+                <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;">
+                    <div style="background:var(--warn-lt);border-radius:10px;padding:12px 14px;border-left:3px solid var(--warn);">
+                        <p style="font-size:13px;font-weight:700;color:#92400e;margin-bottom:4px;">Passive Advisor</p>
+                        <p style="font-size:12px;color:#92400e;margin:0;">AI đưa ra lời khuyên bằng text — kỹ sư vẫn phải tự đọc và tự fix. Không có action tự động.</p>
+                    </div>
+                    <div style="background:var(--warn-lt);border-radius:10px;padding:12px 14px;border-left:3px solid var(--warn);">
+                        <p style="font-size:13px;font-weight:700;color:#92400e;margin-bottom:4px;">Log-only Context</p>
+                        <p style="font-size:12px;color:#92400e;margin:0;">Chỉ đọc log text. Không biết trạng thái hệ thống: K8s pod status, git history, dependency versions, infrastructure metrics.</p>
+                    </div>
+                    <div style="background:var(--warn-lt);border-radius:10px;padding:12px 14px;border-left:3px solid var(--warn);">
+                        <p style="font-size:13px;font-weight:700;color:#92400e;margin-bottom:4px;">Keyword RAG (default)</p>
+                        <p style="font-size:12px;color:#92400e;margin:0;">Vector mode cần production-grade embedder. Placeholder embedding hiện tại không có semantic similarity thực sự.</p>
+                    </div>
+                    <div style="background:var(--warn-lt);border-radius:10px;padding:12px 14px;border-left:3px solid var(--warn);">
+                        <p style="font-size:13px;font-weight:700;color:#92400e;margin-bottom:4px;">Single request — no memory</p>
+                        <p style="font-size:12px;color:#92400e;margin:0;">Mỗi phân tích là một request độc lập. Không có conversation history — AI không biết bạn đã thử fix gì rồi.</p>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <h3 style="color:var(--secondary);">Roadmap nâng cấp</h3>
+                <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;">
+                    <div style="background:var(--sec-lt);border-radius:10px;padding:12px 14px;border-left:3px solid var(--secondary);">
+                        <p style="font-size:13px;font-weight:700;color:#166534;margin-bottom:4px;"><span style="background:#065f46;color:white;border-radius:4px;padding:1px 7px;font-size:10px;margin-right:6px;">v2</span>MCP Integration</p>
+                        <p style="font-size:12px;color:#065f46;margin:0;">Model Context Protocol — kết nối AI Agent trực tiếp vào Git API, K8s API, Grafana. AI có thể <code>git log</code>, <code>kubectl describe pod</code>, đọc metrics để hiểu toàn bộ context.</p>
+                    </div>
+                    <div style="background:var(--sec-lt);border-radius:10px;padding:12px 14px;border-left:3px solid var(--secondary);">
+                        <p style="font-size:13px;font-weight:700;color:#166534;margin-bottom:4px;"><span style="background:#065f46;color:white;border-radius:4px;padding:1px 7px;font-size:10px;margin-right:6px;">v2</span>Agentic Auto-Healing</p>
+                        <p style="font-size:12px;color:#065f46;margin:0;">AI tự tạo Pull Request với code fix đề xuất trực tiếp trên GitHub/GitLab. Kỹ sư chỉ cần review và merge — không cần sửa tay.</p>
+                    </div>
+                    <div style="background:var(--sec-lt);border-radius:10px;padding:12px 14px;border-left:3px solid var(--secondary);">
+                        <p style="font-size:13px;font-weight:700;color:#166534;margin-bottom:4px;"><span style="background:#065f46;color:white;border-radius:4px;padding:1px 7px;font-size:10px;margin-right:6px;">v3</span>Semantic RAG + Real Embedder</p>
+                        <p style="font-size:12px;color:#065f46;margin:0;">Thay placeholder embedder bằng <code>text-embedding-3-small</code> hoặc local embedder từ Ollama. Tìm lỗi "tương tự ngữ nghĩa" dù không trùng từ khóa.</p>
+                    </div>
+                    <div style="background:var(--sec-lt);border-radius:10px;padding:12px 14px;border-left:3px solid var(--secondary);">
+                        <p style="font-size:13px;font-weight:700;color:#166534;margin-bottom:4px;"><span style="background:#065f46;color:white;border-radius:4px;padding:1px 7px;font-size:10px;margin-right:6px;">v3</span>Streaming Response</p>
+                        <p style="font-size:12px;color:#065f46;margin:0;">SSE streaming từ LiteLLM → hiển thị kết quả real-time trên Jenkins console thay vì chờ full response. UX tốt hơn đặc biệt với Ollama local.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div style="background:linear-gradient(135deg,#eff6ff,#dbeafe);border:1px solid #bfdbfe;border-radius:14px;padding:16px 20px;display:flex;align-items:flex-start;gap:16px;">
+            <i class="fa-solid fa-diagram-project" style="font-size:28px;color:var(--primary);flex-shrink:0;"></i>
+            <div>
+                <p style="font-size:14px;font-weight:700;color:#1e40af;margin-bottom:6px;">Architecture Evolution: Passive → Reactive → Agentic</p>
+                <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+                    <div style="background:#dbeafe;border-radius:8px;padding:6px 12px;"><p style="font-size:12px;font-weight:700;color:#1e40af;margin:0;">v1 (Now): Analyze &amp; Advise</p></div>
+                    <span style="color:#3b82f6;">→</span>
+                    <div style="background:#d1fae5;border-radius:8px;padding:6px 12px;"><p style="font-size:12px;font-weight:700;color:#166534;margin:0;">v2: Analyze + MCP Context + PR</p></div>
+                    <span style="color:#10b981;">→</span>
+                    <div style="background:#fdf4ff;border-radius:8px;padding:6px 12px;"><p style="font-size:12px;font-weight:700;color:#7e22ce;margin:0;">v3: Full Agentic Auto-Healing</p></div>
+                </div>
+            </div>
+        </div>
+        <div style="margin-top:16px;">
+            <p style="font-size:12px;font-weight:700;color:var(--text-dark);margin-bottom:8px;"><i class="fa-solid fa-binoculars" style="color:var(--primary);margin-right:6px;"></i>Xem thêm — Các dự án OSS đang làm điều tương tự</p>
+            <div class="four-col" style="gap:10px;">
+                <div style="background:var(--bg-sub);border-radius:10px;padding:10px 12px;border-left:3px solid #a855f7;">
+                    <p style="font-size:12px;font-weight:700;color:#7e22ce;margin-bottom:3px;">k8sgpt</p>
+                    <p style="font-size:11px;color:var(--text-muted);margin:0;">CLI tool phân tích K8s cluster bằng AI — <code>k8sgpt analyze</code> scan toàn bộ namespace, giải thích lỗi Pod/Service bằng ngôn ngữ tự nhiên.</p>
+                </div>
+                <div style="background:var(--bg-sub);border-radius:10px;padding:10px 12px;border-left:3px solid #3b82f6;">
+                    <p style="font-size:12px;font-weight:700;color:#1e40af;margin-bottom:3px;">Robusta + HolmesGPT</p>
+                    <p style="font-size:11px;color:var(--text-muted);margin:0;">Open-source K8s alerting + Holmes AI agent tự investigate alerts, chạy kubectl, đọc logs, cho ra root cause analysis.</p>
+                </div>
+                <div style="background:var(--bg-sub);border-radius:10px;padding:10px 12px;border-left:3px solid #10b981;">
+                    <p style="font-size:12px;font-weight:700;color:#166534;margin-bottom:3px;">Squadcast SRE Copilot</p>
+                    <p style="font-size:11px;color:var(--text-muted);margin:0;">On-call management + AI Copilot tự suggest runbook actions, escalation path, và post-mortem template tự động.</p>
+                </div>
+                <div style="background:var(--bg-sub);border-radius:10px;padding:10px 12px;border-left:3px solid #f59e0b;">
+                    <p style="font-size:12px;font-weight:700;color:#92400e;margin-bottom:3px;">Keptn (CNCF)</p>
+                    <p style="font-size:11px;color:var(--text-muted);margin:0;">Event-driven delivery &amp; operations. Keptn AI Extension cho phép trigger LLM analysis tự động khi quality gate fail.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ═══ SLIDE 15 — SUMMARY ═══ -->
+<div class="slide-container">
+    <div class="slide-header">
+        <span class="slide-number">15</span>
+        <h2 class="slide-title">Tóm Tắt &amp; <span>Key Takeaways</span></h2>
+    </div>
+    <div class="content-area">
+        <p style="font-size:15px;color:var(--text-muted);margin-bottom:20px;">Bạn vừa đi qua hành trình từ <strong>"build fail lúc 2 giờ sáng"</strong> đến <strong>"AI tự phân tích và đề xuất fix"</strong>. Đây là những gì mang về.</p>
+        <div class="four-col" style="gap:18px; margin-bottom:24px;">
+            <div style="background:#eff6ff;border-radius:14px;padding:18px;border-top:4px solid #3b82f6;text-align:center;">
+                <i class="fa-solid fa-filter" style="font-size:28px;color:#3b82f6;margin-bottom:10px;display:block;"></i>
+                <p style="font-size:13px;font-weight:700;color:#1e40af;margin-bottom:6px;">Log Preprocessing</p>
+                <p style="font-size:12px;color:#1e40af;margin:0;">3.000 dòng → 30 dòng. Tiết kiệm 96% token và tăng chất lượng phân tích.</p>
+            </div>
+            <div style="background:#fdf4ff;border-radius:14px;padding:18px;border-top:4px solid #a855f7;text-align:center;">
+                <i class="fa-solid fa-route" style="font-size:28px;color:#a855f7;margin-bottom:10px;display:block;"></i>
+                <p style="font-size:13px;font-weight:700;color:#7e22ce;margin-bottom:6px;">AI Gateway</p>
+                <p style="font-size:12px;color:#7e22ce;margin:0;">LiteLLM = 1 endpoint, nhiều provider. Fallback tự động. Không vendor lock-in.</p>
+            </div>
+            <div style="background:#f0fdf4;border-radius:14px;padding:18px;border-top:4px solid #10b981;text-align:center;">
+                <i class="fa-solid fa-database" style="font-size:28px;color:#10b981;margin-bottom:10px;display:block;"></i>
+                <p style="font-size:13px;font-weight:700;color:#166534;margin-bottom:6px;">RAG Memory</p>
+                <p style="font-size:12px;color:#065f46;margin:0;">PostgreSQL + pgvector lưu lịch sử lỗi. AI học từ kinh nghiệm của team.</p>
+            </div>
+            <div style="background:#fef3c7;border-radius:14px;padding:18px;border-top:4px solid #f59e0b;text-align:center;">
+                <i class="fa-solid fa-shield-halved" style="font-size:28px;color:#f59e0b;margin-bottom:10px;display:block;"></i>
+                <p style="font-size:13px;font-weight:700;color:#92400e;margin-bottom:6px;">Security-first</p>
+                <p style="font-size:12px;color:#92400e;margin:0;">Preprocess loại bỏ secrets trước khi gửi AI. Ollama hoàn toàn offline.</p>
+            </div>
+        </div>
+        <div class="two-col" style="gap:20px;">
+            <div style="background:var(--bg-sub);border-radius:14px;padding:18px 20px;">
+                <p style="font-size:13px;font-weight:700;color:var(--text-dark);margin-bottom:10px;"><i class="fa-solid fa-map" style="color:var(--primary);margin-right:6px;"></i>Stack Summary</p>
+                <div style="display:flex;flex-wrap:wrap;gap:6px;">
+                    <span class="badge badge-blue">FastAPI</span>
+                    <span class="badge badge-blue">Python</span>
+                    <span class="badge badge-green">LiteLLM</span>
+                    <span class="badge badge-green">PostgreSQL</span>
+                    <span class="badge badge-green">pgvector</span>
+                    <span class="badge badge-warn">Jenkins</span>
+                    <span class="badge badge-warn">Bash</span>
+                    <span class="badge badge-dark">Ollama</span>
+                    <span class="badge badge-dark">Docker Compose</span>
+                    <span class="badge" style="background:#fdf4ff;color:#7e22ce;">RAG</span>
+                    <span class="badge" style="background:#fee2e2;color:#991b1b;">Alembic</span>
+                </div>
+            </div>
+            <div style="background:var(--bg-sub);border-radius:14px;padding:18px 20px;">
+                <p style="font-size:13px;font-weight:700;color:var(--text-dark);margin-bottom:10px;"><i class="fa-solid fa-compass" style="color:var(--secondary);margin-right:6px;"></i>Decision Framework</p>
+                <div style="display:flex;flex-direction:column;gap:6px;">
+                    <p style="font-size:12px;margin:0;color:var(--text-muted);">🆓 <strong>No budget, private data:</strong> Ollama (local, offline)</p>
+                    <p style="font-size:12px;margin:0;color:var(--text-muted);">⚡ <strong>Free tier, fast start:</strong> Google Gemini</p>
+                    <p style="font-size:12px;margin:0;color:var(--text-muted);">🏢 <strong>Enterprise, Azure tenant:</strong> Azure AI Foundry</p>
+                    <p style="font-size:12px;margin:0;color:var(--text-muted);">🔄 <strong>Hybrid (all of above):</strong> LiteLLM với fallback chain</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ═══ SLIDE 16 — CLOSING ═══ -->
+<div class="slide-container">
+    <div class="circle-decor" style="background:rgba(0,98,255,0.07);"></div>
+    <div class="dot-grid"></div>
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:24px;flex-shrink:0;">
+        <span class="slide-number">16</span>
+        <span class="slide-tag" style="margin-left:0;">AI-Ops Workshop · Kết thúc</span>
+    </div>
+    <div class="title-layout" style="height:auto;">
+        <h1 style="font-size:52px;">AI-Ops Không Khó —<br><span>Chỉ Cần Bắt Đầu</span></h1>
+        <p class="subtitle" style="font-size:17px; margin-bottom:24px;">
+            Bạn không cần AI/ML background.<br>
+            <strong>Chỉ cần biết Jenkins + Python + 1 buổi chiều.</strong>
+        </p>
+        <div class="three-col" style="gap:10px; margin-bottom:24px;">
+            <div style="display:flex;align-items:center;gap:12px;background:var(--bg-sub);border-radius:12px;padding:12px 16px;border-left:4px solid var(--primary);">
+                <i class="fa-solid fa-calendar-day" style="color:var(--primary);font-size:18px;flex-shrink:0;"></i>
+                <div>
+                    <p style="font-size:13px;font-weight:700;color:var(--text-dark);margin:0;">Hôm nay</p>
+                    <p style="font-size:12px;color:var(--text-muted);margin:0;"><code>docker compose up</code> và gọi <code>/api/analyze-log</code> với log thật của bạn.</p>
+                </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;background:var(--bg-sub);border-radius:12px;padding:12px 16px;border-left:4px solid var(--secondary);">
+                <i class="fa-solid fa-calendar-week" style="color:var(--secondary);font-size:18px;flex-shrink:0;"></i>
+                <div>
+                    <p style="font-size:13px;font-weight:700;color:var(--text-dark);margin:0;">Tuần này</p>
+                    <p style="font-size:12px;color:var(--text-muted);margin:0;">Tích hợp vào Jenkins pipeline của team. Thêm Slack webhook.</p>
+                </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;background:var(--bg-sub);border-radius:12px;padding:12px 16px;border-left:4px solid var(--warn);">
+                <i class="fa-solid fa-calendar" style="color:var(--warn);font-size:18px;flex-shrink:0;"></i>
+                <div>
+                    <p style="font-size:13px;font-weight:700;color:var(--text-dark);margin:0;">Tháng này</p>
+                    <p style="font-size:12px;color:var(--text-muted);margin:0;">Vector RAG với embedder thật. MCP integration để AI đọc git log.</p>
+                </div>
+            </div>
+        </div>
+        <div class="tag-row" style="margin-bottom:20px;">
+            <span class="tag-pill">#NeverStopLearning</span>
+            <span class="tag-pill">#AIOps</span>
+            <span class="tag-pill">#ShipItAndImprove</span>
+        </div>
+        <div class="badge-row">
+            <span class="badge badge-blue"><i class="fa-brands fa-github" style="margin-right:5px;"></i>Source: /ai-ops</span>
+            <span class="badge badge-green"><i class="fa-solid fa-book" style="margin-right:5px;"></i>Docs: README.md</span>
+            <span class="badge badge-dark"><i class="fa-solid fa-flask" style="margin-right:5px;"></i>Swagger: :8000/docs</span>
+            <div class="sep"></div>
+            <div style="background:var(--primary-lt);border:1px solid #bfdbfe;border-radius:10px;padding:8px 16px;white-space:nowrap;">
+                <span style="font-size:11px;color:var(--primary);text-transform:uppercase;letter-spacing:1px;font-weight:700;">Next: </span>
+                <span style="font-size:13px;color:#1e40af;font-weight:600;">MCP + Agentic Auto-Healing</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

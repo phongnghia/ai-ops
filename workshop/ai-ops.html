@@ -40,8 +40,6 @@
             border-radius:24px;
             box-shadow:0 40px 100px -20px rgba(0,0,0,0.2);
         }
-
-        /* ── SLIDE HEADER ── */
         .slide-hd{
             display:flex;align-items:center;gap:16px;
             margin-bottom:28px;padding-bottom:20px;
@@ -1690,127 +1688,92 @@ sys.stdout.<span class="fn">write</span>(<span class="str">""</span>.<span class
         <span class="tag">Roadmap · Open Source</span>
     </div>
     <div class="body">
-        <!-- Row 1: Limitations v1 (left) + Solution path (right) -->
         <div class="g2" style="gap:20px;align-items:start;margin-bottom:14px;">
 
-            <!-- LEFT: Nhược điểm sau live demo -->
+            <!-- LEFT: 5 nhược điểm -->
             <div>
-                <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
-                    <div style="width:28px;height:28px;border-radius:8px;background:#fef2f2;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                        <i class="fa-solid fa-triangle-exclamation" style="color:#dc2626;font-size:13px;"></i>
+                <p style="font-size:12px;font-weight:800;color:var(--text-dark);margin-bottom:8px;"><i class="fa-solid fa-triangle-exclamation" style="color:#dc2626;margin-right:5px;"></i>Nhược điểm v1 — thấy rõ sau demo</p>
+                <div style="display:flex;flex-direction:column;gap:6px;">
+                    <div style="background:#fff1f2;border-radius:8px;padding:9px 12px;border-left:3px solid #dc2626;">
+                        <p style="font-size:12px;font-weight:700;color:#991b1b;margin-bottom:1px;"><i class="fa-solid fa-eye-slash" style="margin-right:4px;font-size:10px;"></i>Log-only context</p>
+                        <p style="font-size:11px;color:#7f1d1d;margin:0;">Không biết K8s pod status, git history, metrics. Root cause đôi khi ở infra, không phải code.</p>
                     </div>
-                    <p style="font-size:13px;font-weight:800;color:var(--text-dark);margin:0;">Nhược điểm của v1 — sau khi xem demo</p>
-                </div>
-                <div style="display:flex;flex-direction:column;gap:7px;">
-                    <div style="background:#fff1f2;border-radius:10px;padding:10px 13px;border-left:3px solid #dc2626;">
-                        <p style="font-size:12px;font-weight:700;color:#991b1b;margin-bottom:2px;"><i class="fa-solid fa-eye-slash" style="margin-right:5px;"></i>Chỉ đọc log — không hiểu context hệ thống</p>
-                        <p style="font-size:11px;color:#7f1d1d;margin:0;">AI chỉ thấy log text. Không biết trạng thái K8s pods, git history gần nhất, metrics CPU/memory, hay infrastructure topology. Đôi khi root cause thật nằm ở infra, không phải code.</p>
+                    <div style="background:#fff1f2;border-radius:8px;padding:9px 12px;border-left:3px solid #dc2626;">
+                        <p style="font-size:12px;font-weight:700;color:#991b1b;margin-bottom:1px;"><i class="fa-solid fa-hand" style="margin-right:4px;font-size:10px;"></i>Passive Advisor</p>
+                        <p style="font-size:11px;color:#7f1d1d;margin:0;">AI đưa text "Fix Steps" — kỹ sư vẫn tự mở file, sửa, commit. Giảm debug time nhưng không giảm effort fix.</p>
                     </div>
-                    <div style="background:#fff1f2;border-radius:10px;padding:10px 13px;border-left:3px solid #dc2626;">
-                        <p style="font-size:12px;font-weight:700;color:#991b1b;margin-bottom:2px;"><i class="fa-solid fa-hand" style="margin-right:5px;"></i>Passive Advisor — kỹ sư vẫn phải tự fix</p>
-                        <p style="font-size:11px;color:#7f1d1d;margin:0;">AI đưa ra "Fix Steps" dạng text. Kỹ sư đọc → tự mở file → tự sửa → tự commit. Giảm thời gian debug nhưng không giảm được effort thực thi fix.</p>
+                    <div style="background:#fff1f2;border-radius:8px;padding:9px 12px;border-left:3px solid #dc2626;">
+                        <p style="font-size:12px;font-weight:700;color:#991b1b;margin-bottom:1px;"><i class="fa-solid fa-memory" style="margin-right:4px;font-size:10px;"></i>RAG sơ khai — keyword match</p>
+                        <p style="font-size:11px;color:#7f1d1d;margin:0;">Không tìm lỗi tương tự nếu dùng từ khóa khác. Cần real embedder để semantic similarity thật sự.</p>
                     </div>
-                    <div style="background:#fff1f2;border-radius:10px;padding:10px 13px;border-left:3px solid #dc2626;">
-                        <p style="font-size:12px;font-weight:700;color:#991b1b;margin-bottom:2px;"><i class="fa-solid fa-memory" style="margin-right:5px;"></i>RAG còn sơ khai — vector search chưa thật sự semantic</p>
-                        <p style="font-size:11px;color:#7f1d1d;margin:0;">Placeholder embedder hiện tại dùng keyword match. Không tìm được lỗi "tương tự ngữ nghĩa" nếu khác từ khóa. Cần production-grade embedder mới khai thác hết sức mạnh RAG.</p>
+                    <div style="background:#fff1f2;border-radius:8px;padding:9px 12px;border-left:3px solid #dc2626;">
+                        <p style="font-size:12px;font-weight:700;color:#991b1b;margin-bottom:1px;"><i class="fa-solid fa-hourglass-half" style="margin-right:4px;font-size:10px;"></i>Latency cao với Ollama</p>
+                        <p style="font-size:11px;color:#7f1d1d;margin:0;">CPU inference 60–120s mỗi build fail — UX kém trong CI/CD pipeline. Cloud LLM giải quyết nhưng có chi phí.</p>
                     </div>
-                    <div style="background:#fff1f2;border-radius:10px;padding:10px 13px;border-left:3px solid #dc2626;">
-                        <p style="font-size:12px;font-weight:700;color:#991b1b;margin-bottom:2px;"><i class="fa-solid fa-hourglass-half" style="margin-right:5px;"></i>Latency cao với Ollama — UX kém khi chạy local</p>
-                        <p style="font-size:11px;color:#7f1d1d;margin:0;">Ollama CPU inference mất 60–120s. Trong pipeline CI/CD, mỗi build fail đều phải chờ. Cloud LLM giải quyết nhưng phát sinh chi phí và data privacy concern.</p>
-                    </div>
-                    <div style="background:#fff1f2;border-radius:10px;padding:10px 13px;border-left:3px solid #dc2626;">
-                        <p style="font-size:12px;font-weight:700;color:#991b1b;margin-bottom:2px;"><i class="fa-solid fa-xmark-circle" style="margin-right:5px;"></i>Single-request — không có memory giữa các phân tích</p>
-                        <p style="font-size:11px;color:#7f1d1d;margin:0;">Mỗi lần build fail là 1 request độc lập. AI không biết build trước đã gợi ý gì, đã fix được chưa, hay đang ở step nào trong quá trình debug.</p>
+                    <div style="background:#fff1f2;border-radius:8px;padding:9px 12px;border-left:3px solid #dc2626;">
+                        <p style="font-size:12px;font-weight:700;color:#991b1b;margin-bottom:1px;"><i class="fa-solid fa-rotate" style="margin-right:4px;font-size:10px;"></i>No memory — stateless</p>
+                        <p style="font-size:11px;color:#7f1d1d;margin:0;">Mỗi build fail = 1 request độc lập. AI không biết đã gợi ý gì lần trước, đã fix được chưa.</p>
                     </div>
                 </div>
             </div>
 
-            <!-- RIGHT: Evolution path + Solutions -->
+            <!-- RIGHT: Solutions + Evolution -->
             <div>
-                <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
-                    <div style="width:28px;height:28px;border-radius:8px;background:#f0fdf4;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                        <i class="fa-solid fa-arrow-trend-up" style="color:#059669;font-size:13px;"></i>
+                <p style="font-size:12px;font-weight:800;color:var(--text-dark);margin-bottom:8px;"><i class="fa-solid fa-arrow-trend-up" style="color:#059669;margin-right:5px;"></i>Mỗi nhược điểm → Solution tương ứng</p>
+                <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px;">
+                    <div style="background:#f0fdf4;border-radius:8px;padding:9px 12px;border-left:3px solid #10b981;display:flex;gap:7px;align-items:flex-start;">
+                        <i class="fa-solid fa-arrow-right" style="color:#10b981;font-size:9px;margin-top:3px;flex-shrink:0;"></i>
+                        <div><p style="font-size:11.5px;font-weight:700;color:#166534;margin-bottom:1px;">MCP — đọc Git, K8s, Grafana</p><p style="font-size:11px;color:var(--text-muted);margin:0;">AI tự <code>git log</code>, <code>kubectl describe</code> → hiểu toàn bộ context trước khi phân tích.</p></div>
                     </div>
-                    <p style="font-size:13px;font-weight:800;color:var(--text-dark);margin:0;">Từng nhược điểm → Solution tương ứng</p>
-                </div>
-                <div style="display:flex;flex-direction:column;gap:7px;margin-bottom:10px;">
-                    <div style="background:#f0fdf4;border-radius:10px;padding:10px 13px;border-left:3px solid #10b981;display:flex;gap:8px;">
-                        <i class="fa-solid fa-arrow-right" style="color:#10b981;font-size:10px;margin-top:3px;flex-shrink:0;"></i>
-                        <div><p style="font-size:11.5px;font-weight:700;color:#166534;margin-bottom:2px;">MCP (Model Context Protocol)</p>
-                        <p style="font-size:11px;color:var(--text-muted);margin:0;">Kết nối AI Agent trực tiếp vào Git API, K8s API, Grafana. AI tự <code>git log</code>, <code>kubectl describe pod</code>, đọc metrics → hiểu toàn bộ context hệ thống trước khi phân tích.</p></div>
+                    <div style="background:#f0fdf4;border-radius:8px;padding:9px 12px;border-left:3px solid #10b981;display:flex;gap:7px;align-items:flex-start;">
+                        <i class="fa-solid fa-arrow-right" style="color:#10b981;font-size:9px;margin-top:3px;flex-shrink:0;"></i>
+                        <div><p style="font-size:11.5px;font-weight:700;color:#166534;margin-bottom:1px;">Agentic Auto-Healing — AI tự tạo PR</p><p style="font-size:11px;color:var(--text-muted);margin:0;">Tự tạo branch, edit file, commit, mở Pull Request. Kỹ sư chỉ review &amp; merge.</p></div>
                     </div>
-                    <div style="background:#f0fdf4;border-radius:10px;padding:10px 13px;border-left:3px solid #10b981;display:flex;gap:8px;">
-                        <i class="fa-solid fa-arrow-right" style="color:#10b981;font-size:10px;margin-top:3px;flex-shrink:0;"></i>
-                        <div><p style="font-size:11.5px;font-weight:700;color:#166534;margin-bottom:2px;">Agentic Auto-Healing — AI tự tạo PR fix</p>
-                        <p style="font-size:11px;color:var(--text-muted);margin:0;">AI Agent không chỉ đề xuất — tự tạo branch, edit file, commit, mở Pull Request trên GitHub/GitLab. Kỹ sư chỉ review &amp; merge.</p></div>
+                    <div style="background:#f0fdf4;border-radius:8px;padding:9px 12px;border-left:3px solid #10b981;display:flex;gap:7px;align-items:flex-start;">
+                        <i class="fa-solid fa-arrow-right" style="color:#10b981;font-size:9px;margin-top:3px;flex-shrink:0;"></i>
+                        <div><p style="font-size:11.5px;font-weight:700;color:#166534;margin-bottom:1px;">Real Embedder + Semantic Cache</p><p style="font-size:11px;color:var(--text-muted);margin:0;"><code>text-embedding-3-small</code> cho RAG thật sự. LiteLLM cache: lỗi giống nhau trả về &lt;0.5s.</p></div>
                     </div>
-                    <div style="background:#f0fdf4;border-radius:10px;padding:10px 13px;border-left:3px solid #10b981;display:flex;gap:8px;">
-                        <i class="fa-solid fa-arrow-right" style="color:#10b981;font-size:10px;margin-top:3px;flex-shrink:0;"></i>
-                        <div><p style="font-size:11.5px;font-weight:700;color:#166534;margin-bottom:2px;">Real Embedder + Semantic RAG</p>
-                        <p style="font-size:11px;color:var(--text-muted);margin:0;"><code>text-embedding-3-small</code> hoặc Ollama embedder. Cosine similarity thật sự → tìm lỗi "tương tự ý nghĩa" dù dùng từ khác nhau.</p></div>
-                    </div>
-                    <div style="background:#f0fdf4;border-radius:10px;padding:10px 13px;border-left:3px solid #10b981;display:flex;gap:8px;">
-                        <i class="fa-solid fa-arrow-right" style="color:#10b981;font-size:10px;margin-top:3px;flex-shrink:0;"></i>
-                        <div><p style="font-size:11.5px;font-weight:700;color:#166634;margin-bottom:2px;">Streaming + Caching</p>
-                        <p style="font-size:11px;color:var(--text-muted);margin:0;">SSE streaming cho UX real-time. LiteLLM semantic cache: lỗi giống nhau trả kết quả cached trong &lt;0.5s, không gọi LLM thêm.</p></div>
+                    <div style="background:#f0fdf4;border-radius:8px;padding:9px 12px;border-left:3px solid #10b981;display:flex;gap:7px;align-items:flex-start;">
+                        <i class="fa-solid fa-arrow-right" style="color:#10b981;font-size:9px;margin-top:3px;flex-shrink:0;"></i>
+                        <div><p style="font-size:11.5px;font-weight:700;color:#166534;margin-bottom:1px;">Conversation memory</p><p style="font-size:11px;color:var(--text-muted);margin:0;">Lưu session debug: AI biết build trước gợi ý gì, kỹ sư đã thử fix gì → advice tốt hơn.</p></div>
                     </div>
                 </div>
 
-                <!-- Evolution timeline -->
-                <div style="background:linear-gradient(135deg,#f8fafc,#eff6ff);border:1.5px solid #bfdbfe;border-radius:10px;padding:12px 14px;">
-                    <p style="font-size:11px;font-weight:700;color:var(--text-dark);margin-bottom:8px;">Lộ trình Passive → Agentic</p>
+                <!-- Evolution timeline compact -->
+                <div style="background:linear-gradient(135deg,#f8fafc,#eff6ff);border:1.5px solid #bfdbfe;border-radius:10px;padding:10px 14px;">
+                    <p style="font-size:10px;font-weight:700;color:var(--text-dark);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px;">Lộ trình: Passive → Reactive → Agentic</p>
                     <div style="display:flex;align-items:center;gap:4px;">
-                        <div style="background:#dbeafe;border:1px solid #93c5fd;border-radius:7px;padding:6px 10px;text-align:center;flex:1;">
-                            <p style="font-size:9px;font-weight:800;color:#1e40af;margin-bottom:1px;text-transform:uppercase;letter-spacing:.5px;">v1 · Now</p>
-                            <p style="font-size:11px;font-weight:700;color:#1e40af;margin:0;">Analyze &amp; Advise</p>
-                        </div>
-                        <i class="fa-solid fa-arrow-right" style="color:#94a3b8;font-size:12px;flex-shrink:0;"></i>
-                        <div style="background:#d1fae5;border:1px solid #6ee7b7;border-radius:7px;padding:6px 10px;text-align:center;flex:1;">
-                            <p style="font-size:9px;font-weight:800;color:#065f46;margin-bottom:1px;text-transform:uppercase;letter-spacing:.5px;">v2 · Next</p>
-                            <p style="font-size:11px;font-weight:700;color:#166534;margin:0;">MCP + Auto PR</p>
-                        </div>
-                        <i class="fa-solid fa-arrow-right" style="color:#94a3b8;font-size:12px;flex-shrink:0;"></i>
-                        <div style="background:#ede9fe;border:1px solid #c4b5fd;border-radius:7px;padding:6px 10px;text-align:center;flex:1;">
-                            <p style="font-size:9px;font-weight:800;color:#5b21b6;margin-bottom:1px;text-transform:uppercase;letter-spacing:.5px;">v3 · Future</p>
-                            <p style="font-size:11px;font-weight:700;color:#7c3aed;margin:0;">Full Auto-Healing</p>
-                        </div>
+                        <div style="background:#dbeafe;border:1px solid #93c5fd;border-radius:7px;padding:5px 8px;text-align:center;flex:1;"><p style="font-size:9px;font-weight:800;color:#1e40af;margin-bottom:1px;">v1 · NOW</p><p style="font-size:11px;font-weight:700;color:#1e40af;margin:0;">Analyze &amp; Advise</p></div>
+                        <i class="fa-solid fa-arrow-right" style="color:#94a3b8;font-size:11px;flex-shrink:0;"></i>
+                        <div style="background:#d1fae5;border:1px solid #6ee7b7;border-radius:7px;padding:5px 8px;text-align:center;flex:1;"><p style="font-size:9px;font-weight:800;color:#065f46;margin-bottom:1px;">v2 · NEXT</p><p style="font-size:11px;font-weight:700;color:#166534;margin:0;">MCP + Auto PR</p></div>
+                        <i class="fa-solid fa-arrow-right" style="color:#94a3b8;font-size:11px;flex-shrink:0;"></i>
+                        <div style="background:#ede9fe;border:1px solid #c4b5fd;border-radius:7px;padding:5px 8px;text-align:center;flex:1;"><p style="font-size:9px;font-weight:800;color:#5b21b6;margin-bottom:1px;">v3 · FUTURE</p><p style="font-size:11px;font-weight:700;color:#7c3aed;margin:0;">Full Auto-Healing</p></div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- OSS tools row (compact) -->
-        <div style="border-top:2px solid var(--border-ui);padding-top:12px;margin-bottom:0;">
-            <p style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;"><i class="fa-brands fa-github" style="margin-right:5px;"></i>OSS Tools đang làm tương tự — tham khảo thêm</p>
-            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">
-                <div style="background:var(--bg-sub);border-radius:8px;padding:9px 11px;border-left:3px solid #a855f7;">
-                    <p style="font-size:11.5px;font-weight:700;color:#7e22ce;margin-bottom:2px;">k8sgpt <span style="background:#ede9fe;color:#6d28d9;font-size:8px;padding:1px 4px;border-radius:3px;margin-left:3px;">CNCF</span></p>
-                    <p style="font-size:10.5px;color:var(--text-muted);margin:0;">CLI phân tích K8s cluster bằng AI — giải thích lỗi Pod/Service/PVC tự nhiên.</p>
-                </div>
-                <div style="background:var(--bg-sub);border-radius:8px;padding:9px 11px;border-left:3px solid #3b82f6;">
-                    <p style="font-size:11.5px;font-weight:700;color:#1e40af;margin-bottom:2px;">HolmesGPT</p>
-                    <p style="font-size:10.5px;color:var(--text-muted);margin:0;">AI agent tự investigate alert → chạy kubectl → đọc logs → đưa root cause.</p>
-                </div>
-                <div style="background:var(--bg-sub);border-radius:8px;padding:9px 11px;border-left:3px solid #10b981;">
-                    <p style="font-size:11.5px;font-weight:700;color:#166534;margin-bottom:2px;">Keptn <span style="background:#d1fae5;color:#065f46;font-size:8px;padding:1px 4px;border-radius:3px;margin-left:3px;">Event-driven</span></p>
-                    <p style="font-size:10.5px;color:var(--text-muted);margin:0;">Platform điều phối delivery + AI quality gate trigger tự động.</p>
-                </div>
-                <div style="background:var(--bg-sub);border-radius:8px;padding:9px 11px;border-left:3px solid var(--warn);">
-                    <p style="font-size:11.5px;font-weight:700;color:#92400e;margin-bottom:2px;">Squadcast SRE Copilot</p>
-                    <p style="font-size:10.5px;color:var(--text-muted);margin:0;">On-call + AI suggest runbook, escalation, post-mortem tự động.</p>
-                </div>
+        <!-- OSS tools compact -->
+        <div style="border-top:1.5px solid var(--border-ui);padding-top:10px;">
+            <p style="font-size:10.5px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:7px;"><i class="fa-brands fa-github" style="margin-right:5px;"></i>OSS đang làm tương tự</p>
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:7px;">
+                <div style="background:var(--bg-sub);border-radius:7px;padding:8px 10px;border-left:2px solid #a855f7;"><p style="font-size:11px;font-weight:700;color:#7e22ce;margin-bottom:1px;">k8sgpt <span style="background:#ede9fe;color:#6d28d9;font-size:8px;padding:1px 4px;border-radius:3px;">CNCF</span></p><p style="font-size:10px;color:var(--text-muted);margin:0;">CLI phân tích K8s cluster bằng AI.</p></div>
+                <div style="background:var(--bg-sub);border-radius:7px;padding:8px 10px;border-left:2px solid #3b82f6;"><p style="font-size:11px;font-weight:700;color:#1e40af;margin-bottom:1px;">HolmesGPT</p><p style="font-size:10px;color:var(--text-muted);margin:0;">AI agent tự investigate K8s alerts.</p></div>
+                <div style="background:var(--bg-sub);border-radius:7px;padding:8px 10px;border-left:2px solid #10b981;"><p style="font-size:11px;font-weight:700;color:#166534;margin-bottom:1px;">Keptn <span style="background:#d1fae5;color:#065f46;font-size:8px;padding:1px 4px;border-radius:3px;">CNCF</span></p><p style="font-size:10px;color:var(--text-muted);margin:0;">Event-driven AI quality gates.</p></div>
+                <div style="background:var(--bg-sub);border-radius:7px;padding:8px 10px;border-left:2px solid var(--warn);"><p style="font-size:11px;font-weight:700;color:#92400e;margin-bottom:1px;">Squadcast</p><p style="font-size:10px;color:var(--text-muted);margin:0;">On-call + AI runbook suggestion.</p></div>
             </div>
         </div>
         <div class="glossary">
             <span class="gl-label">Glossary</span>
             <span class="gl-item"><strong>MCP</strong> Model Context Protocol — chuẩn mở kết nối AI Agent với tools/data sources bên ngoài</span>
-            <span class="gl-item"><strong>Agentic AI</strong> AI có khả năng lập kế hoạch và tự thực hiện nhiều bước action liên tiếp, không chỉ trả lời</span>
-            <span class="gl-item"><strong>SSE</strong> Server-Sent Events — streaming kết quả từ server về client theo thời gian thực</span>
+            <span class="gl-item"><strong>Agentic AI</strong> AI tự lập kế hoạch và thực hiện nhiều bước action liên tiếp, không chỉ trả lời</span>
             <span class="gl-item"><strong>Semantic Cache</strong> cache dựa trên ý nghĩa câu hỏi, không phải exact text match</span>
-            <span class="gl-item"><strong>PR</strong> Pull Request — đề xuất merge code vào nhánh chính</span>
-            <span class="gl-item"><strong>SRE</strong> Site Reliability Engineering — áp dụng software engineering vào vận hành hệ thống</span>
+            <span class="gl-item"><strong>SSE</strong> Server-Sent Events — streaming kết quả real-time</span>
+            <span class="gl-item"><strong>PR</strong> Pull Request — đề xuất merge code</span>
         </div>
     </div>
+</div>
+
 <!-- ══════════════════════════════════════════════════════════
      SLIDE 14 — SUMMARY + CLOSING
 ══════════════════════════════════════════════════════════ -->

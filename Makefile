@@ -1,4 +1,4 @@
-.PHONY: build test build-demo test-demo
+.PHONY: build test build-demo test-demo build-python-demo test-python-demo
 
 # AI Ops backend (Python)
 
@@ -14,10 +14,24 @@ test:
 # No Java or Maven installation required on the host.
 # Docker pulls maven:3.9.6-eclipse-temurin-21-alpine and runs the build
 # inside the container. The test target is expected to FAIL (3 intentional
-# bugs) and produce a Maven Surefire log for AI Ops analysis.
+# test failures) and produce a Maven Surefire log for AI Ops analysis.
 
 build-demo:
-	docker build --target test --tag order-service:test demo-app 2>&1; exit $$?
+	docker build --target test --tag order-service:test demo-app/java-order-service 2>&1; exit $$?
 
 test-demo:
-	docker build --target test --tag order-service:test demo-app 2>&1; exit $$?
+	docker build --target test --tag order-service:test demo-app/java-order-service 2>&1; exit $$?
+
+# Demo Python inventory-service (Python — runs inside Docker)
+#
+# No Python installation required on the host.
+# The compile stage fails on BUG #1 (SyntaxError).
+# The test stage fails on BUG #2 (NameError) and BUG #3 (ZeroDivisionError).
+
+build-python-demo:
+	docker build --target compile --tag inventory-service:compile \
+		demo-app/python-inventory-service 2>&1; exit $$?
+
+test-python-demo:
+	docker build --target test --tag inventory-service:test \
+		demo-app/python-inventory-service 2>&1; exit $$?

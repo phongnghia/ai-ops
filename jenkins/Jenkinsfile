@@ -12,7 +12,8 @@
 // Pipeline parameters:
 // LOCAL_WORKSPACE   Absolute path to the project on the Jenkins agent.
 // BACKEND_URL_PARAM Backend URL. Falls back to http://localhost:8000.
-// DEMO_PROJECT      "none", "java-order-service", or "java-order-service-test-only".
+// DEMO_PROJECT      "none", "java-order-service", "java-order-service-test-only",
+//                   "python-inventory-service", or "python-inventory-service-compile-only".
 // DEMO_FAIL_BUILD   Fail with a synthetic error for a quick AI analysis demo.
 
 pipeline {
@@ -33,11 +34,13 @@ pipeline {
         )
         choice(
             name: 'DEMO_PROJECT',
-            choices: ['none', 'java-order-service', 'java-order-service-test-only'],
+            choices: ['none', 'java-order-service', 'java-order-service-test-only', 'python-inventory-service', 'python-inventory-service-compile-only'],
             description: '''Demo project options:
-  none                         — use DEMO_FAIL_BUILD for a quick synthetic failure
-  java-order-service           — compile + test via Docker (3 intentional test failures)
-  java-order-service-test-only — test only via Docker, reuses Docker cache (faster)''',
+  none                              — use DEMO_FAIL_BUILD for a quick synthetic failure
+  java-order-service                — Java: compile + test via Docker (3 intentional test failures)
+  java-order-service-test-only      — Java: test only via Docker, reuses Docker cache (faster)
+  python-inventory-service          — Python: syntax check + pytest (SyntaxError + NameError + ZeroDivisionError)
+  python-inventory-service-compile-only — Python: syntax check only (fails on SyntaxError in service.py)''',
         )
         booleanParam(
             name: 'DEMO_FAIL_BUILD',
@@ -58,6 +61,8 @@ pipeline {
                 echo "Build starting — demo project: ${params.DEMO_PROJECT}, synthetic failure: ${params.DEMO_FAIL_BUILD}"
                 script {
                     def isJavaDemo = params.DEMO_PROJECT in ['java-order-service', 'java-order-service-test-only']
+                    def isPythonCompileOnly = params.DEMO_PROJECT == 'python-inventory-service-compile-only'
+                    def isPythonDemo = params.DEMO_PROJECT == 'python-inventory-service' || isPythonCompileOnly
 
                     if (isJavaDemo) {
                         sh '''#!/usr/bin/env bash
@@ -65,8 +70,18 @@ pipeline {
                         docker build \
                             --target test \
                             --tag order-service:test \
-                            "${LOCAL_WORKSPACE}/demo-app"
+                            "${LOCAL_WORKSPACE}/demo-app/java-order-service"
                         '''
+                    } else if (isPythonDemo) {
+                        def target = isPythonCompileOnly ? 'compile' : 'test'
+                        def tag    = isPythonCompileOnly ? 'compile' : 'test'
+                        sh """#!/usr/bin/env bash
+                        set -euo pipefail
+                        docker build \\
+                            --target ${target} \\
+                            --tag inventory-service:${tag} \\
+                            "\${LOCAL_WORKSPACE}/demo-app/python-inventory-service"
+                        """
                     } else if (params.DEMO_FAIL_BUILD == true) {
                         sh '''
                         echo "ERROR: Demo dependency installation failed"
@@ -84,8 +99,9 @@ pipeline {
             steps {
                 script {
                     def isJavaDemo = params.DEMO_PROJECT in ['java-order-service', 'java-order-service-test-only']
+                    def isPythonDemo = params.DEMO_PROJECT in ['python-inventory-service', 'python-inventory-service-compile-only']
 
-                    if (isJavaDemo) {
+                    if (isJavaDemo || isPythonDemo) {
                         echo 'Test stage skipped: tests ran inside the Docker build stage.'
                     } else if (params.DEMO_FAIL_BUILD == true) {
                         echo 'Test stage skipped: build already failed in Build stage.'

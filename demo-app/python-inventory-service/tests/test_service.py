@@ -1,8 +1,9 @@
 """Unit tests for inventory service.
 
-These tests catch bugs that survive the syntax check:
-  - BUG #2: NameError in calculate_total_value()
-  - BUG #3: ZeroDivisionError in average_price()
+Failing tests (demonstrate bugs for AI Ops analysis):
+  BUG #1 — NameError in calculate_total_value() — always fails.
+  BUG #2 — ZeroDivisionError in average_price() — always fails on empty store.
+  BUG #3 — RuntimeError in apply_bulk_discount() — flaky, fails ~50% of runs.
 """
 
 import pytest
@@ -65,8 +66,11 @@ class TestAdjustStock:
 
 class TestCalculateTotalValue:
     def test_total_value_with_products(self):
-        # BUG #2: calculate_total_value() uses undefined `prodcut` → NameError.
-        # This test FAILS with: NameError: name 'prodcut' is not defined
+        """BUG #1: NameError — 'prodcut' is not defined.
+
+        This test ALWAYS fails with:
+          NameError: name 'prodcut' is not defined
+        """
         service.add_product(_make_product(pid=1, qty=2, price=10.0))
         service.add_product(_make_product(pid=2, qty=3, price=5.0))
 
@@ -79,13 +83,47 @@ class TestCalculateTotalValue:
 
 
 class TestAveragePrice:
-    def test_average_price_with_products(self):
+    def test_average_with_products(self):
         service.add_product(_make_product(pid=1, price=10.0))
         service.add_product(_make_product(pid=2, price=20.0))
         assert service.average_price() == pytest.approx(15.0)
 
-    def test_average_price_empty_raises(self):
-        # BUG #3: average_price() divides by len([]) → ZeroDivisionError.
-        # This test FAILS because the function raises instead of returning 0.0.
+    def test_average_empty_raises(self):
+        """BUG #2: ZeroDivisionError — len([]) == 0.
+
+        This test ALWAYS fails because average_price() does not guard against
+        an empty inventory:
+          ZeroDivisionError: division by zero
+        """
         result = service.average_price()
         assert result == 0.0
+
+
+class TestApplyBulkDiscount:
+    def test_discount_reduces_price(self):
+        """BUG #3: RuntimeError — flaky, fails ~50% of runs.
+
+        apply_bulk_discount() simulates a flaky external pricing service that
+        raises RuntimeError on roughly half of all calls. Running the test
+        suite multiple times will produce intermittent failures:
+
+          RuntimeError: Pricing service temporarily unavailable
+
+        This is the classic 'works on my machine' failure that motivates
+        AI-assisted log analysis — the same code passes one run and fails
+        the next.
+        """
+        service.add_product(_make_product(pid=1, price=100.0))
+
+        updated = service.apply_bulk_discount(product_id=1, discount_pct=20)
+
+        assert updated.price == pytest.approx(80.0)
+
+    def test_invalid_discount_raises(self):
+        service.add_product(_make_product(pid=1, price=100.0))
+        with pytest.raises(ValueError, match="discount_pct"):
+            service.apply_bulk_discount(product_id=1, discount_pct=150)
+
+    def test_discount_missing_product_raises(self):
+        with pytest.raises(KeyError, match="not found"):
+            service.apply_bulk_discount(product_id=999, discount_pct=10)

@@ -25,12 +25,9 @@ test-demo:
 # Demo Python inventory-service (Python — runs inside Docker)
 #
 # No Python installation required on the host.
-# The compile stage fails on BUG #1 (SyntaxError).
-# The test stage fails on BUG #2 (NameError) and BUG #3 (ZeroDivisionError).
-
-build-python-demo:
-	docker build --target compile --tag inventory-service:compile \
-		demo-app/python-inventory-service 2>&1; exit $$?
+# BUG #1 (NameError) and BUG #2 (ZeroDivisionError) always fail.
+# BUG #3 (RuntimeError in apply_bulk_discount) fails ~50% of runs.
+# Run multiple times to observe the intermittent failure.
 
 test-python-demo:
 	docker build --target test --tag inventory-service:test \

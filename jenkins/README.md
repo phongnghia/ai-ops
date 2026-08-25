@@ -4,25 +4,21 @@ Declarative Jenkins pipeline that automatically analyzes failed build logs using
 
 ## How it works
 
-```
-Build or Test stage fails
-         │
-         ▼
-post { failure } block
-         │
-         ├─ withCredentials        ← inject secrets from Jenkins Credentials store
-         │
-         ├─ configFileProvider     ← load non-secret config from Jenkins Managed File
-         │   └─ fallback           ← LOCAL_WORKSPACE/.env if managed file not found
-         │
-         ├─ analyze.sh             ← preprocess build log → call backend → export AI_*
-         │   ├─ preprocess_log.sh  ← read Jenkins log from disk, filter error lines
-         │   └─ POST /api/analyze-log → AI_ANALYSIS, AI_PROVIDER, AI_MODEL, AI_STATUS
-         │
-         └─ notify.py              ← format and send notifications
-             ├─ Jenkins console    ← ANSI colored output (requires AnsiColor plugin)
-             ├─ Slack              ← Block Kit with mrkdwn formatting
-             └─ Teams              ← Power Automate webhook (plain text)
+```mermaid
+flowchart TD
+    F([Build or Test stage fails]) --> PF[post failure block]
+    PF --> WC["withCredentials<br/>inject secrets from Jenkins Credentials"]
+    PF --> CF["configFileProvider<br/>load non-secret config from Managed File"]
+    CF -->|fallback| ENV["LOCAL_WORKSPACE/.env<br/>if managed file not found"]
+    PF --> AS["analyze.sh<br/>preprocess log → call backend → export AI_*"]
+    AS --> PL["preprocess_log.sh<br/>read Jenkins log from disk, filter error lines"]
+    AS --> API["POST /api/analyze-log<br/>exports AI_ANALYSIS · AI_PROVIDER · AI_MODEL"]
+    PF --> NP["notify.py<br/>format and display results"]
+    NP --> JC["Jenkins console<br/>ANSI colored output"]
+
+    style F fill:#fecaca,stroke:#ef4444
+    style JC fill:#1e293b,color:#e2e8f0,stroke:#475569
+    style API fill:#dbeafe,stroke:#3b82f6
 ```
 
 Any failure in the analysis or notification steps is caught — it never affects the pipeline result.
@@ -50,14 +46,20 @@ Install all plugins from **Manage Jenkins → Plugins → Available plugins**.
 
 The pipeline resolves configuration from three sources in this priority order:
 
-```
-1. Jenkins Credentials  ← secrets only, highest priority
-        ↓ override
-2. Jenkins Managed File ← non-secret config (ai-ops-env)
-        ↓ fallback
-3. LOCAL_WORKSPACE/.env ← file on agent disk (used when managed file not set up)
-        ↓ override
-4. BACKEND_URL_PARAM    ← explicit pipeline parameter, always wins for BACKEND_URL
+```mermaid
+flowchart TD
+    C1["1 — Jenkins Credentials<br/>secrets only · highest priority"]
+    C2["2 — Jenkins Managed File<br/>non-secret config · ai-ops-env"]
+    C3["3 — LOCAL_WORKSPACE/.env<br/>file on agent disk · last resort"]
+    C4["4 — BACKEND_URL_PARAM<br/>explicit parameter · always wins for BACKEND_URL"]
+    C1 -->|override| C2
+    C2 -->|fallback| C3
+    C3 -->|override| C4
+
+    style C1 fill:#fecaca,stroke:#ef4444
+    style C2 fill:#fef3c7,stroke:#f59e0b
+    style C3 fill:#dbeafe,stroke:#3b82f6
+    style C4 fill:#d1fae5,stroke:#10b981
 ```
 
 ### Managed File setup (non-secret config)
@@ -317,11 +319,20 @@ Set `ANSI_CONSOLE=false` in `.env` or managed file to disable colors.
 
 ## Timeout chain
 
-```
-curl (analyze.sh):  300s  ← CURL_TIMEOUT_SECONDS in analyze.sh
-  └─ Backend:       200s  ← LLM_TIMEOUT_SECONDS in .env
-       └─ LiteLLM:  180s  ← request_timeout in litellm/config.*.yaml
-            └─ Ollama inference: ~60-120s on CPU
+```mermaid
+flowchart TD
+    C["curl — analyze.sh\n⏱ 300s"]
+    B["Backend FastAPI\n⏱ 200s — LLM_TIMEOUT_SECONDS"]
+    L["LiteLLM Gateway\n⏱ 180s — request_timeout"]
+    O["Ollama inference\n⏱ ~60–120s on CPU"]
+    C -->|calls| B
+    B -->|calls| L
+    L -->|calls| O
+
+    style C fill:#fef3c7,stroke:#f59e0b
+    style B fill:#dbeafe,stroke:#3b82f6
+    style L fill:#fdf4ff,stroke:#a855f7
+    style O fill:#d1fae5,stroke:#10b981
 ```
 
 A curl timeout is non-fatal — `AI_STATUS` is set to `failed`, the notification includes "AI analysis unavailable", and the pipeline continues.

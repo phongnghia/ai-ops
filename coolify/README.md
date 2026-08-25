@@ -11,19 +11,22 @@ Jenkins and ArgoCD can call the backend directly because their notification
 systems let you fully control the request body. Coolify uses a fixed webhook
 payload schema — a thin adapter is needed to translate it.
 
-```
-Coolify Event (deployment_failed, status_changed, ...)
-        │
-        │ POST (Coolify webhook payload)
-        ▼
-Coolify Webhook Receiver :9000   ← webhook_receiver.py
-        │
-        │ POST /api/analyze-log (AI Ops format)
-        ▼
-AI Ops Backend :8000
-        │
-        ├─ LLM analysis (Gemini / Azure / Ollama)
-        └─ Slack / Teams notification
+```mermaid
+sequenceDiagram
+    participant CO as Coolify
+    participant RV as Webhook Receiver :9000
+    participant BE as AI Ops Backend :8000
+    participant LLM as LiteLLM Gateway
+    participant NT as Slack / Teams
+
+    CO->>RV: POST deployment_failed payload
+    RV->>RV: transform to analyze-log format
+    RV->>BE: POST /api/analyze-log
+    BE->>LLM: LLM completion request
+    LLM-->>BE: analysis text
+    BE->>NT: send notification
+    BE-->>RV: 200 OK + analysis
+    RV-->>CO: {"status": "analyzed"}
 ```
 
 ## Supported Coolify events

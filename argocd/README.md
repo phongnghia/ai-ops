@@ -7,17 +7,18 @@ configured LLM and dispatches the diagnosis to Slack or Teams.
 
 ## How it works
 
-```
-ArgoCD Application → Degraded / Sync Failed
-        │
-        ▼ argocd-notifications-cm.yaml
-trigger.on-sync-failed / trigger.on-health-degraded
-        │
-        ▼ template.ai-ops-analysis
-POST /api/analyze-log (ai-ops-backend service)
-        │
-        ├─ LLM analysis (Gemini / Azure / Ollama)
-        └─ Slack / Teams notification
+```mermaid
+flowchart TD
+    A(["ArgoCD Application<br/>Degraded / Sync Failed"]) --> N["ArgoCD Notifications Controller<br/>argocd-notifications-cm.yaml"]
+    N --> TR["trigger.on-sync-failed<br/>trigger.on-health-degraded"]
+    TR --> T[template.ai-ops-analysis]
+    T --> API["POST /api/analyze-log<br/>ai-ops-backend service"]
+    API --> LLM["LLM analysis<br/>Gemini · Azure · Ollama"]
+    API --> SL([Slack / Teams notification])
+
+    style A fill:#fecaca,stroke:#ef4444
+    style API fill:#dbeafe,stroke:#3b82f6
+    style SL fill:#fef3c7,stroke:#f59e0b
 ```
 
 ArgoCD does not expose raw container logs via Notifications. Instead the

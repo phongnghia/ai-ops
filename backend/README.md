@@ -4,25 +4,21 @@ FastAPI service that receives a preprocessed build log, enriches it with similar
 
 ## Architecture
 
-```
-HTTP request
-     │
-     ▼
-api/analyze.py            ← HTTP boundary: validate, assign request_id, log, delegate
-     │
-     ▼
-core/analysis_service.py  ← orchestrator: RAG → prompt → LLM → persist → return
-     │
-     ├─ core/context_retriever.py   ← fetch similar past analyses from PostgreSQL
-     ├─ core/prompt_builder.py      ← assemble system prompt + log + RAG context
-     ├─ core/prompts.py             ← SYSTEM_PROMPT constant + section label constants
-     │
-     ├─ llm/litellm_client.py       ← call LiteLLM gateway (OpenAI-compatible)
-     │
-     └─ repository/postgres_repository.py  ← save record + find similar records
-              │
-              ▼
-         PostgreSQL (pgvector)
+```mermaid
+flowchart TD
+    REQ([HTTP request]) --> API["api/analyze.py<br/>HTTP boundary: validate · log · delegate"]
+    API --> SVC["core/analysis_service.py<br/>orchestrator: RAG → prompt → LLM → persist → return"]
+    SVC --> CR["core/context_retriever.py<br/>fetch similar past analyses"]
+    SVC --> PB["core/prompt_builder.py<br/>assemble system prompt + log + RAG context"]
+    SVC --> LC["llm/litellm_client.py<br/>call LiteLLM gateway"]
+    SVC --> RP["repository/postgres_repository.py<br/>save record + find similar records"]
+    CR --> DB[(PostgreSQL · pgvector)]
+    RP --> DB
+
+    style REQ fill:#fecaca,stroke:#ef4444
+    style API fill:#dbeafe,stroke:#3b82f6
+    style SVC fill:#fdf4ff,stroke:#a855f7
+    style DB fill:#d1fae5,stroke:#10b981
 ```
 
 ### Layers

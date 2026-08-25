@@ -4,16 +4,18 @@ LiteLLM acts as a unified OpenAI-compatible proxy between the backend and the ac
 
 ## Role in the stack
 
-```
-Backend (FastAPI)
-     │
-     │  POST /chat/completions
-     │  model: "log-analyzer"
-     ▼
-LiteLLM :4000
-     │
-     ├─ OLLAMA_PROVIDER_ENABLE=true   → ollama_chat/<model>  →  Ollama :11434
-     └─ AZURE_FOUNDRY_PROVIDER_ENABLE=true → azure/<model>  →  Azure AI Foundry
+```mermaid
+flowchart LR
+    B["Backend FastAPI<br/>POST /chat/completions<br/>model: log-analyzer"] --> LG["LiteLLM :4000"]
+    LG -->|OLLAMA_PROVIDER_ENABLE=true| OL["Ollama :11434<br/>ollama_chat/model"]
+    LG -->|AZURE_FOUNDRY_PROVIDER_ENABLE=true| AZ["Azure AI Foundry<br/>azure/model"]
+    LG -->|GOOGLE_GEMINI_PROVIDER_ENABLE=true| GM["Google Gemini<br/>gemini/model"]
+
+    style B fill:#dbeafe,stroke:#3b82f6
+    style LG fill:#fdf4ff,stroke:#a855f7
+    style OL fill:#fef3c7,stroke:#f59e0b
+    style AZ fill:#dbeafe,stroke:#3b82f6
+    style GM fill:#d1fae5,stroke:#10b981
 ```
 
 The backend is unaware of which provider handles a request. LiteLLM resolves the `log-analyzer` model group to the correct upstream and returns a standard OpenAI response.
@@ -30,11 +32,17 @@ Three config files cover all provider combinations. The correct one is selected 
 
 Selection logic in `docker-compose.yml`:
 
-```bash
-config=config.ollama.yaml   # default
+```mermaid
+flowchart TD
+    S([Start]) --> D1{"AZURE=true<br/>AND OLLAMA=true?"}
+    D1 -->|Yes| CB["config.both.yaml<br/>Azure primary · Ollama fallback"]
+    D1 -->|No| D2{"AZURE=true<br/>AND OLLAMA=false?"}
+    D2 -->|Yes| CF["config.foundry.yaml<br/>Azure only"]
+    D2 -->|No| CO["config.ollama.yaml<br/>Ollama only — default"]
 
-if AZURE=true && OLLAMA=true  → config.both.yaml
-if AZURE=true && OLLAMA=false → config.foundry.yaml
+    style CB fill:#dbeafe,stroke:#3b82f6
+    style CF fill:#fef3c7,stroke:#f59e0b
+    style CO fill:#d1fae5,stroke:#10b981
 ```
 
 Before starting, the selected file is processed with `sed` to replace `__OLLAMA_MODEL__` and `__AZURE_MODEL__` placeholders with the actual values from environment variables, then written to `/tmp/litellm-config.yaml`.

@@ -4,33 +4,30 @@ A self-hosted system that automatically analyzes failed CI/CD build logs using A
 
 ## How it works
 
-```
-Jenkins build fails
-       │
-       ▼
-jenkins/scripts/analyze.sh
-       │
-       ├─ preprocess_log.sh   ← read Jenkins log from disk, filter error lines
-       │
-       └─ POST /api/analyze-log
-               │
-               ├─ PostgreSQL   ← retrieve similar past analyses (RAG context)
-               ├─ prompts.py   ← assemble system prompt (plain text, 3 sections)
-               │
-               ▼
-         LiteLLM gateway       ← unified OpenAI-compatible proxy
-               │
-               ├─ Ollama        ← local CPU inference (slow, free, no credentials)
-               ├─ Google Gemini ← cloud GPU (fast, free tier available)
-               └─ Azure Foundry ← cloud GPU (fast, requires Entra SP)
-               │
-               ▼
-         Plain-text analysis   ← 🚨 Problem / 🔍 Root Cause / 🛠️ Fix Steps
-               │
-       ┌───────┴────────┐
-       ▼                ▼
-Jenkins console      Slack / Teams
-(ANSI colored)       (formatted notification)
+```mermaid
+flowchart TD
+    J([Jenkins build fails]) --> A[jenkins/scripts/analyze.sh]
+    A --> P["preprocess_log.sh<br/>filter error lines from disk log"]
+    A --> API[POST /api/analyze-log]
+    API --> DB[("PostgreSQL<br/>RAG context retrieval")]
+    API --> PR["prompts.py<br/>assemble system prompt"]
+    DB --> PR
+    PR --> LG["LiteLLM Gateway :4000<br/>OpenAI-compatible proxy"]
+    LG --> OL["Ollama<br/>local CPU · free"]
+    LG --> GM["Google Gemini<br/>cloud · free tier"]
+    LG --> AZ["Azure AI Foundry<br/>cloud · fastest"]
+    OL & GM & AZ --> AN["Plain-text analysis<br/>🚨 Problem / 🔍 Root Cause / 🛠️ Fix Steps"]
+    AN --> C["Jenkins console<br/>ANSI colored"]
+    AN --> N["Slack / Teams<br/>formatted notification"]
+    API --> DB2[("PostgreSQL<br/>save for future RAG")]
+
+    style J fill:#fecaca,stroke:#ef4444
+    style AN fill:#fdf4ff,stroke:#a855f7
+    style C fill:#1e293b,color:#e2e8f0,stroke:#475569
+    style N fill:#fef3c7,stroke:#f59e0b
+    style DB fill:#d1fae5,stroke:#10b981
+    style DB2 fill:#d1fae5,stroke:#10b981
+    style LG fill:#dbeafe,stroke:#3b82f6
 ```
 
 ---
@@ -236,11 +233,20 @@ docker compose down -v
 
 ## Timeout chain
 
-```
-curl (Jenkins analyze.sh):  300s  ← CURL_TIMEOUT_SECONDS
-  └─ Backend:               200s  ← LLM_TIMEOUT_SECONDS (.env)
-       └─ LiteLLM:          180s  ← request_timeout (litellm/config.*.yaml)
-            └─ Ollama:    60-120s  ← CPU inference time
+```mermaid
+flowchart TD
+    C["curl — analyze.sh\n⏱ 300s max"]
+    B["Backend FastAPI\n⏱ 200s — LLM_TIMEOUT_SECONDS"]
+    L["LiteLLM Gateway\n⏱ 180s — request_timeout"]
+    O["Ollama inference\n⏱ 60–120s on CPU"]
+    C -->|calls| B
+    B -->|calls| L
+    L -->|calls| O
+
+    style C fill:#fef3c7,stroke:#f59e0b
+    style B fill:#dbeafe,stroke:#3b82f6
+    style L fill:#fdf4ff,stroke:#a855f7
+    style O fill:#d1fae5,stroke:#10b981
 ```
 
 ---
